@@ -5,7 +5,7 @@
   "author": "GetScatter Ltd. 2019",
   "homepage": "",
   "license": "ISC",
-  "main": "lib/eosio.js",
+  "main": "dist/eosio.js",
   "directories": {
     "lib": "lib",
     "test": "__tests__"

@@ -10,12 +10,7 @@ export default class HardwareService {
 
 	static async openConnections(onlyIfDisconnected = false){
 		if(!hardwareService) return console.error(NO_INIT);
-		return this.checkLedgerConnection(onlyIfDisconnected);
-	}
-
-	static async checkLedgerConnection(onlyIfDisconnected = false){
-		if(!hardwareService) return console.error(NO_INIT);
-		return hardwareService.checkLedgerConnection(onlyIfDisconnected);
+		return this.openConnections(onlyIfDisconnected);
 	}
 
 	static async checkHardware(account){

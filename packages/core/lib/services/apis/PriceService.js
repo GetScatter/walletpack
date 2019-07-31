@@ -63,7 +63,8 @@ export default class PriceService {
 	    const prices = await PriceService.getCurrencyPrices();
 	    const yesterday = await PriceService.getTimeline(dateId(1));
 	    const today = await PriceService.getTimeline();
-	    return StoreService.get().dispatch(Actions.SET_PRICE_DATA, {prices, yesterday, today});
+	    await StoreService.get().dispatch(Actions.SET_PRICE_DATA, {prices, yesterday, today});
+	    return {prices, yesterday, today};
     }
 
     static async getTimeline(date = null){

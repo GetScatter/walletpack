@@ -4,8 +4,6 @@ import BackendApiService from "../apis/BackendApiService";
 import StoreService from "../utility/StoreService";
 import ObjectHelpers from "../../util/ObjectHelpers";
 
-let lastPullTime;
-
 const storeApps = res => {
 	const allApps = res.reduce((acc,x) => {
 		if(x.hasOwnProperty('hasimage'))
@@ -14,28 +12,18 @@ const storeApps = res => {
 		acc[x.applink] = x;
 		return acc;
 	}, {});
-	StoreService.get().dispatch(Actions.SET_DAPP_DATA, allApps);
-}
 
-const getAppsFromGithub = () => {
-	return new Promise(resolve => {
-		fetch(`https://rawgit.com/GetScatter/ScatterApps/master/apps.json?rand=${Math.random() * 10000 + 1}`).then(res => res.json()).then(result => {
-			storeApps(Object.keys(result).reduce((acc, blockchain) => {
-				result[blockchain].map(app => {
-					acc.push(Object.assign(app, {blockchain}));
-				})
-				return acc;
-			}, []));
-			resolve(true);
-		}).catch(() => resolve(false));
-	})
-};
+	if(StoreService.get()) {
+		StoreService.get().dispatch(Actions.SET_DAPP_DATA, allApps);
+	}
+
+	return allApps;
+}
 
 const getAppsFromAPI = () => {
 	return new Promise(resolve => {
-		BackendApiService.apps().then(res => {
-			storeApps(res);
-			resolve(true);
+		BackendApiService.apps().then(async res => {
+			resolve(await storeApps(res));
 		}).catch(() => resolve(false));
 	})
 };
@@ -48,15 +36,8 @@ export default class AppsService {
 	 * @returns {Promise<boolean>}
 	 */
 	static async getApps(){
-		if(!StoreService.get()) return;
-		const noDapps = !Object.keys(StoreService.get().state.dappData).length;
-		const dataIsStale = lastPullTime === 0 || (lastPullTime + (1000*60*60*6)) < +new Date();
-		if(noDapps || dataIsStale) {
-			const fetched = await getAppsFromAPI() ? true : await getAppsFromGithub();
-			if (fetched) lastPullTime = +new Date();
-		}
-
-		return true;
+		const apps = await BackendApiService.apps();
+		return await storeApps(apps);
 	}
 
 	static getAppData(origin){
