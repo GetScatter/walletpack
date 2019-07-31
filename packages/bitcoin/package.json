@@ -1,0 +1,23 @@
+{
+  "name": "bitcoin",
+  "version": "1.0.0",
+  "description": "> TODO: description",
+  "author": "GetScatter Ltd. 2019",
+  "homepage": "",
+  "license": "ISC",
+  "main": "lib/bitcoin.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "bitcoinjs-lib": "^5.1.2",
+    "@walletpack/core": "^1.0.0"
+  }
+}

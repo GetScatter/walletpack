@@ -1,0 +1,6 @@
+.idea/
+node_modules/
+.env
+.DS_Store
+*.iml
+dist

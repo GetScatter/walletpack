@@ -1,0 +1,24 @@
+{
+  "name": "tron",
+  "version": "0.0.0",
+  "description": "> TODO: description",
+  "author": "GetScatter Ltd. 2019",
+  "homepage": "",
+  "license": "ISC",
+  "main": "lib/tron.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "ethereumjs-util": "^6.1.0",
+    "tronweb": "^2.6.4",
+    "@walletpack/core": "^1.0.0"
+  }
+}

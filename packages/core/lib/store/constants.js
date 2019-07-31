@@ -1,0 +1,13 @@
+export const SET_DAPP_DATA =  'setDappData';
+export const SET_DAPP_LOGO =  'setDappLogo';
+export const SET_RESOURCES =  'setResources';
+export const ADD_RESOURCES =  'addResources';
+export const SET_SCATTER =      'setScatter';
+export const LOAD_SCATTER =     'loadScatter';
+export const HOLD_SCATTER =     'holdScatter';
+export const SET_BALANCES =     'setBalances';
+export const REMOVE_BALANCES =  'removeBalances';
+export const SET_PRICES =       'setPrices';
+export const UPDATE_HISTORY =	'updateHistory';
+export const DELTA_HISTORY =	'deltaHistory';
+export const SET_PRICE_DATA =	'setPriceData';
