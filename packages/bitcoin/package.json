@@ -1,5 +1,5 @@
 {
-  "name": "bitcoin",
+  "name": "@walletpack/bitcoin",
   "version": "1.0.0",
   "description": "> TODO: description",
   "author": "GetScatter Ltd. 2019",
