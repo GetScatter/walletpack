@@ -20,5 +20,9 @@
     "@walletpack/core": "^1.0.1",
     "ethereumjs-util": "^6.1.0",
     "tronweb": "^2.6.4"
+  },
+  "gitHead": "70bd19f93b503618a79eb519eef082bfc40b16d7",
+  "publishConfig": {
+    "access": "public"
   }
 }

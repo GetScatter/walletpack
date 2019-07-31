@@ -22,5 +22,9 @@
     "ethereumjs-util": "^6.1.0",
     "web3": "^1.2.0",
     "web3-provider-engine": "^15.0.0"
+  },
+  "gitHead": "70bd19f93b503618a79eb519eef082bfc40b16d7",
+  "publishConfig": {
+    "access": "public"
   }
 }

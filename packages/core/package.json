@@ -23,5 +23,9 @@
     "eosjs-ecc": "^4.0.4",
     "qrcode": "^1.4.1",
     "scrypt-async": "^2.0.1"
+  },
+  "gitHead": "70bd19f93b503618a79eb519eef082bfc40b16d7",
+  "publishConfig": {
+    "access": "public"
   }
 }
