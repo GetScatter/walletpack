@@ -13,5 +13,5 @@ if(parent === 'node_modules') {
 		if(fs.existsSync(`./${file}`)) rimraf.sync(`./${file}`);
 		fs.renameSync(`./${usingDist ? 'dist' : 'lib'}/${file}`, `./${file}`);
 	})
-	rimraf.sync(`./${!usingDist ? 'dist' : 'lib'}`);
+	// rimraf.sync(`./${!usingDist ? 'dist' : 'lib'}`);
 }
