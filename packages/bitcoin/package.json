@@ -7,7 +7,8 @@
   "license": "ISC",
   "main": "dist/bitcoin.js",
   "files": [
-    "dist"
+    "dist",
+    "prepare.js"
   ],
   "scripts": {
     "install": "node prepare.js",
