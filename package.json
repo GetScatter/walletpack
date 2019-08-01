@@ -5,7 +5,7 @@
     "postinstall": "lerna bootstrap",
     "build": "lerna exec -- babel --out-dir dist lib",
     "links": "lerna exec -- yarn link",
-    "publish": "lerna publish",
+    "publish": "node prepublish.js && lerna publish",
     "testfile": "mocha --require @babel/register --exit --timeout 1000000",
     "test": "npm run testfile \"./packages/**/__tests__/**/*.test.js\"",
     "pack": "webpack-cli --mode=production --display-error-details"
