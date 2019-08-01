@@ -1,14 +1,14 @@
-import Plugin from                      '@walletpack/core/lib/plugins/Plugin';
-import * as PluginTypes from            '@walletpack/core/lib/plugins/PluginTypes';
-import {Blockchains} from               '@walletpack/core/lib/models/Blockchains'
-import Network from                     "@walletpack/core/lib/models/Network";
-import Token from                       "@walletpack/core/lib/models/Token";
-import ObjectHelpers from               "@walletpack/core/lib/util/ObjectHelpers";
-import KeyPairService from              "@walletpack/core/lib/services/secure/KeyPairService";
-import StoreService from                "@walletpack/core/lib/services/utility/StoreService";
-import * as Actions from                "@walletpack/core/lib/models/api/ApiActions";
-import {GET, POST} from                 "@walletpack/core/lib/services/apis/BackendApiService";
-import EventService from                "@walletpack/core/lib/services/utility/EventService";
+import Plugin from                      '@walletpack/core/plugins/Plugin';
+import * as PluginTypes from            '@walletpack/core/plugins/PluginTypes';
+import {Blockchains} from               '@walletpack/core/models/Blockchains'
+import Network from                     "@walletpack/core/models/Network";
+import Token from                       "@walletpack/core/models/Token";
+import ObjectHelpers from               "@walletpack/core/util/ObjectHelpers";
+import KeyPairService from              "@walletpack/core/services/secure/KeyPairService";
+import StoreService from                "@walletpack/core/services/utility/StoreService";
+import * as Actions from                "@walletpack/core/models/api/ApiActions";
+import {GET, POST} from                 "@walletpack/core/services/apis/BackendApiService";
+import EventService from                "@walletpack/core/services/utility/EventService";
 const bitcoin = require('bitcoinjs-lib');
 
 

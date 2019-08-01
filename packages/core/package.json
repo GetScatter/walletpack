@@ -5,7 +5,7 @@
   "author": "GetScatter Ltd. 2019",
   "homepage": "",
   "license": "ISC",
-  "main": "dist/core.js",
+  "main": "core.js",
   "files": [
     "dist",
     "prepare.js"

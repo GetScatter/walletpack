@@ -1,15 +1,15 @@
-import Plugin from                      '@walletpack/core/lib/plugins/Plugin';
-import * as PluginTypes from            '@walletpack/core/lib/plugins/PluginTypes';
-import {Blockchains} from               '@walletpack/core/lib/models/Blockchains'
-import Network from                     '@walletpack/core/lib/models/Network'
-import * as Actions from                '@walletpack/core/lib/models/api/ApiActions';
-import KeyPairService from              '@walletpack/core/lib/services/secure/KeyPairService';
-import ObjectHelpers from               '@walletpack/core/lib/util/ObjectHelpers'
-import Token from                       "@walletpack/core/lib/models/Token";
-import HardwareService from             "@walletpack/core/lib/services/secure/HardwareService";
-import TokenService from                "@walletpack/core/lib/services/utility/TokenService";
-import StoreService from                "@walletpack/core/lib/services/utility/StoreService";
-import EventService from                "@walletpack/core/lib/services/utility/EventService";
+import Plugin from                      '@walletpack/core/plugins/Plugin';
+import * as PluginTypes from            '@walletpack/core/plugins/PluginTypes';
+import {Blockchains} from               '@walletpack/core/models/Blockchains'
+import Network from                     '@walletpack/core/models/Network'
+import * as Actions from                '@walletpack/core/models/api/ApiActions';
+import KeyPairService from              '@walletpack/core/services/secure/KeyPairService';
+import ObjectHelpers from               '@walletpack/core/util/ObjectHelpers'
+import Token from                       "@walletpack/core/models/Token";
+import HardwareService from             "@walletpack/core/services/secure/HardwareService";
+import TokenService from                "@walletpack/core/services/utility/TokenService";
+import StoreService from                "@walletpack/core/services/utility/StoreService";
+import EventService from                "@walletpack/core/services/utility/EventService";
 
 import Web3 from 'web3';
 import ProviderEngine from 'web3-provider-engine';

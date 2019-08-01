@@ -5,7 +5,7 @@
   "author": "GetScatter Ltd. 2019",
   "homepage": "",
   "license": "ISC",
-  "main": "dist/ethereum.js",
+  "main": "ethereum.js",
   "files": [
     "dist",
     "prepare.js"

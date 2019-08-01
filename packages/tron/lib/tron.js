@@ -1,14 +1,14 @@
-import Plugin from                      '@walletpack/core/lib/plugins/Plugin';
-import * as PluginTypes from            '@walletpack/core/lib/plugins/PluginTypes';
-import * as Actions from                '@walletpack/core/lib/models/api/ApiActions';
-import {Blockchains} from               '@walletpack/core/lib/models/Blockchains'
-import Network from                     '@walletpack/core/lib/models/Network'
-import KeyPairService from              '@walletpack/core/lib/services/secure/KeyPairService';
-import Token from                       "@walletpack/core/lib/models/Token";
-import HardwareService from             "@walletpack/core/lib/services/secure/HardwareService";
-import StoreService from                "@walletpack/core/lib/services/utility/StoreService";
-import TokenService from                "@walletpack/core/lib/services/utility/TokenService";
-import EventService from                "@walletpack/core/lib/services/utility/EventService";
+import Plugin from                      '@walletpack/core/plugins/Plugin';
+import * as PluginTypes from            '@walletpack/core/plugins/PluginTypes';
+import * as Actions from                '@walletpack/core/models/api/ApiActions';
+import {Blockchains} from               '@walletpack/core/models/Blockchains'
+import Network from                     '@walletpack/core/models/Network'
+import KeyPairService from              '@walletpack/core/services/secure/KeyPairService';
+import Token from                       "@walletpack/core/models/Token";
+import HardwareService from             "@walletpack/core/services/secure/HardwareService";
+import StoreService from                "@walletpack/core/services/utility/StoreService";
+import TokenService from                "@walletpack/core/services/utility/TokenService";
+import EventService from                "@walletpack/core/services/utility/EventService";
 
 import TronWeb from 'tronweb';
 const ethUtil = require('ethereumjs-util');

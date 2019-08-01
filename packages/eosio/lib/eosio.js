@@ -1,19 +1,19 @@
-import Plugin from                  '@walletpack/core/lib/plugins/Plugin';
-import * as PluginTypes from        '@walletpack/core/lib/plugins/PluginTypes';
-import {Blockchains} from           '@walletpack/core/lib/models/Blockchains'
-import Network from                 '@walletpack/core/lib/models/Network'
-import Account from                 '@walletpack/core/lib/models/Account'
-import KeyPairService from          '@walletpack/core/lib/services/secure/KeyPairService'
-import ObjectHelpers from           '@walletpack/core/lib/util/ObjectHelpers'
-import * as Actions from            '@walletpack/core/lib/models/api/ApiActions';
-import * as StoreActions from       '@walletpack/core/lib/store/constants'
-import Token from                   "@walletpack/core/lib/models/Token";
-import AccountAction from           "@walletpack/core/lib/models/AccountAction";
-import AccountService from          "@walletpack/core/lib/services/blockchain/AccountService";
-import HardwareService from         "@walletpack/core/lib/services/secure/HardwareService";
-import HistoricAction from          "@walletpack/core/lib/models/histories/HistoricAction";
-import StoreService from            "@walletpack/core/lib/services/utility/StoreService";
-import EventService from            "@walletpack/core/lib/services/utility/EventService";
+import Plugin from                  '@walletpack/core/plugins/Plugin';
+import * as PluginTypes from        '@walletpack/core/plugins/PluginTypes';
+import {Blockchains} from           '@walletpack/core/models/Blockchains'
+import Network from                 '@walletpack/core/models/Network'
+import Account from                 '@walletpack/core/models/Account'
+import KeyPairService from          '@walletpack/core/services/secure/KeyPairService'
+import ObjectHelpers from           '@walletpack/core/util/ObjectHelpers'
+import * as Actions from            '@walletpack/core/models/api/ApiActions';
+import * as StoreActions from       '@walletpack/core/store/constants'
+import Token from                   "@walletpack/core/models/Token";
+import AccountAction from           "@walletpack/core/models/AccountAction";
+import AccountService from          "@walletpack/core/services/blockchain/AccountService";
+import HardwareService from         "@walletpack/core/services/secure/HardwareService";
+import HistoricAction from          "@walletpack/core/models/histories/HistoricAction";
+import StoreService from            "@walletpack/core/services/utility/StoreService";
+import EventService from            "@walletpack/core/services/utility/EventService";
 import ecc from 'eosjs-ecc';
 import { Api, JsonRpc, RpcError, JsSignatureProvider } from 'eosjs';
 import * as numeric from "eosjs/dist/eosjs-numeric";
