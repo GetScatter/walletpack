@@ -7,7 +7,8 @@
   "license": "ISC",
   "main": "dist/core.js",
   "files": [
-    "dist"
+    "dist",
+    "prepare.js"
   ],
   "scripts": {
     "install": "node prepare.js",
