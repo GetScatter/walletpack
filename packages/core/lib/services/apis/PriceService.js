@@ -100,6 +100,7 @@ export default class PriceService {
 		    return Token.fromJson({
 			    symbol:this.fiatSymbol(displayCurrency),
 			    amount:total.toFixed(2),
+			    decimals:2,
 		    })
 	    }
     }

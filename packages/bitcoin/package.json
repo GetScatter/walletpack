@@ -5,7 +5,7 @@
   "author": "GetScatter Ltd. 2019",
   "homepage": "",
   "license": "ISC",
-  "main": "dist/bitcoin.js",
+  "main": "bitcoin.js",
   "files": [
     "dist",
     "prepare.js"

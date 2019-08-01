@@ -12,7 +12,7 @@ export default class Token {
         this.contract = contract;
         this.symbol = symbol;
         this.name = name ? name : symbol;
-	    this.decimals = decimals ? decimals : PluginRepository.plugin(blockchain).defaultDecimals();
+	    this.decimals = decimals ? decimals : 2;
 
 	    this.amount = 0;
 
