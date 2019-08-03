@@ -1,6 +1,6 @@
 import {BlockchainsArray, blockchainName} from "../../models/Blockchains";
 import * as Actions from '../../store/constants';
-import BackendApiService from "../apis/BackendApiService";
+import BackendApiService, {GET} from "../apis/BackendApiService";
 import StoreService from "../utility/StoreService";
 import ObjectHelpers from "../../util/ObjectHelpers";
 
@@ -20,14 +20,6 @@ const storeApps = res => {
 	return allApps;
 }
 
-const getAppsFromAPI = () => {
-	return new Promise(resolve => {
-		BackendApiService.apps().then(async res => {
-			resolve(await storeApps(res));
-		}).catch(() => resolve(false));
-	})
-};
-
 export default class AppsService {
 
 	/***
@@ -38,6 +30,10 @@ export default class AppsService {
 	static async getApps(){
 		const apps = await BackendApiService.apps();
 		return await storeApps(apps);
+	}
+
+	static async getFeaturedApps(){
+		return await GET('apps/featured');
 	}
 
 	static getAppData(origin){
