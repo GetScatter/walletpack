@@ -1,0 +1,29 @@
+{
+  "name": "@walletpack/core",
+  "version": "1.0.10",
+  "description": "> TODO: description",
+  "author": "GetScatter Ltd. 2019",
+  "homepage": "",
+  "license": "ISC",
+  "main": "core.js",
+  "files": [
+    "dist",
+    "prepare.js"
+  ],
+  "scripts": {
+    "install": "node prepare.js",
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "aes-oop": "^1.0.4",
+    "bignumber.js": "^9.0.0",
+    "bip39": "^3.0.2",
+    "eosjs-ecc": "^4.0.4",
+    "qrcode": "^1.4.1",
+    "scrypt-async": "^2.0.1"
+  },
+  "gitHead": "70bd19f93b503618a79eb519eef082bfc40b16d7",
+  "publishConfig": {
+    "access": "public"
+  }
+}

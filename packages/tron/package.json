@@ -1,0 +1,26 @@
+{
+  "name": "@walletpack/tron",
+  "version": "0.0.11",
+  "description": "> TODO: description",
+  "author": "GetScatter Ltd. 2019",
+  "homepage": "",
+  "license": "ISC",
+  "main": "tron.js",
+  "files": [
+    "dist",
+    "prepare.js"
+  ],
+  "scripts": {
+    "install": "node prepare.js",
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "@walletpack/core": "^1.0.10",
+    "ethereumjs-util": "^6.1.0",
+    "tronweb": "^2.6.4"
+  },
+  "gitHead": "70bd19f93b503618a79eb519eef082bfc40b16d7",
+  "publishConfig": {
+    "access": "public"
+  }
+}
