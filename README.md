@@ -1,6 +1,10 @@
-# Scatter Core
+# WalletPack
 
-This is the core functionality of Scatter wallets which is pulled into Desktop, Mobile and Bridge.
+This is a wallet building SDK which takes care of all of the heavy lifting for creating blockchain wallets.
+
+Currently being used in Scatter Desktop, Scatter Mobile, and Scatter Bridge.
+
+
 
 ## Setup
 
