@@ -5,6 +5,8 @@ const rimraf = require("rimraf");
 const paths = __dirname.split(path.sep);
 const parent = paths[paths.length-2];
 
+if(parent === 'packages') return;
+
 rimraf.sync("./__tests__");
 const files = fs.readdirSync(`./dist`);
 files.map(file => {
