@@ -25,11 +25,18 @@ import StoreService from "../utility/StoreService";
 import Framework from "../utility/Framework";
 import EventService from "../utility/EventService";
 
+let blocked = [];
 export default class ApiService {
+
+	static blockRoutes(routes){
+		blocked = routes;
+	}
 
     static async handler(request){
         // Only accept pre-defined messages.
         if(!Object.keys(Actions).map(key => Actions[key]).includes(request.type)) return;
+
+        if(blocked.includes(request.type)) return {id:request.id, result:Error.malicious('This wallet has turned this API route off.')};
 
         return await this[request.type](request);
     }
