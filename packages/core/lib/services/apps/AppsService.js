@@ -5,19 +5,7 @@ import StoreService from "../utility/StoreService";
 import ObjectHelpers from "../../util/ObjectHelpers";
 
 const storeApps = res => {
-	const allApps = res.reduce((acc,x) => {
-		if(x.hasOwnProperty('hasimage'))
-			x.img = `https://rawgit.com/GetScatter/ScatterApps/master/logos/${x.applink}.svg`
 
-		acc[x.applink] = x;
-		return acc;
-	}, {});
-
-	if(StoreService.get()) {
-		StoreService.get().dispatch(Actions.SET_DAPP_DATA, allApps);
-	}
-
-	return allApps;
 }
 
 export default class AppsService {
@@ -27,9 +15,20 @@ export default class AppsService {
 	 * falls back to github if API is failing.
 	 * @returns {Promise<boolean>}
 	 */
-	static async getApps(){
-		const apps = await BackendApiService.apps();
-		return await storeApps(apps);
+	static async getApps({store = true, include = [], imageBackend = 'https://rawgit.com/GetScatter/ScatterApps/master/logos', filetype = 'svg'}){
+		const apps = await BackendApiService.apps(include);
+		const formattedApps = apps.reduce((acc,x) => {
+			if(x.hasOwnProperty('hasimage')) x.img = `${imageBackend}/${x.applink}.${filetype}`;
+
+			acc[x.applink] = x;
+			return acc;
+		}, {});
+
+		if(store && StoreService.get()) {
+			StoreService.get().dispatch(Actions.SET_DAPP_DATA, formattedApps);
+		}
+
+		return formattedApps;
 	}
 
 	static async getFeaturedApps(){

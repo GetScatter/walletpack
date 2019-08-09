@@ -31,6 +31,7 @@ export const GET = route => {
 	const [proof, headers] = getHeaders();
 	return fetch(`${baseUrl}${route}`, {
 		method:'GET',
+		mode:'cors',
 		headers
 	}).then(res => validate(proof,res))
 };
@@ -39,14 +40,17 @@ export const POST = (route, data) => {
 	const [proof, headers] = getHeaders();
 	return fetch(`${baseUrl}${route}`, {
 		method:'POST',
+		mode:'cors',
 		headers,
 		body:JSON.stringify(data),
 	}).then(res => validate(proof,res))
 };
 
 export default class BackendApiService {
-	static async apps(){
-		return GET(`apps?flat=true`);
+
+	// Add an array of applinks to filter only those results.
+	static async apps(apps = []){
+		return POST(`apps`, {apps});
 	}
 
 	// ACCOUNT CREATION
