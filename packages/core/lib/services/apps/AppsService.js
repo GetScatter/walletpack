@@ -15,7 +15,7 @@ export default class AppsService {
 	 * falls back to github if API is failing.
 	 * @returns {Promise<boolean>}
 	 */
-	static async getApps({store = true, include = [], imageBackend = 'https://rawgit.com/GetScatter/ScatterApps/master/logos', filetype = 'svg'}){
+	static async getApps(include = [], store = true, imageBackend = 'https://rawgit.com/GetScatter/ScatterApps/master/logos', filetype = 'svg'){
 		const apps = await BackendApiService.apps(include);
 		const formattedApps = apps.reduce((acc,x) => {
 			if(x.hasOwnProperty('hasimage')) x.img = `${imageBackend}/${x.applink}.${filetype}`;
@@ -35,16 +35,11 @@ export default class AppsService {
 		return await GET('apps/featured');
 	}
 
-	static getAppData(origin){
-		const emptyResult = {
-			applink:origin,
-			type:'',
-			name:origin,
-			description:'',
-			logo:'',
-			url:'',
-		};
+	static async getAppDataFromServer(origin){
+		return GET(`app/${origin}`);
+	}
 
+	static appIsInLocalData(origin){
 		const dappData = StoreService.get().state.dappData;
 		let found = dappData[origin];
 
@@ -71,6 +66,20 @@ export default class AppsService {
 			})();
 		}
 
+		return found;
+	}
+
+	static getAppData(origin){
+		const emptyResult = {
+			applink:origin,
+			type:'',
+			name:origin,
+			description:'',
+			logo:'',
+			url:'',
+		};
+
+		const found = this.appIsInLocalData(origin);
 		if(!found) return emptyResult;
 
 		const maxDescriptionLength = 70;

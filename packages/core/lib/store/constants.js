@@ -10,4 +10,5 @@ export const REMOVE_BALANCES =  'removeBalances';
 export const SET_PRICES =       'setPrices';
 export const UPDATE_HISTORY =	'updateHistory';
 export const DELTA_HISTORY =	'deltaHistory';
+export const LOAD_HISTORY =	    'loadHistory';
 export const SET_PRICE_DATA =	'setPriceData';
