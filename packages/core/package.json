@@ -17,7 +17,7 @@
   "dependencies": {
     "aes-oop": "^1.0.4",
     "bignumber.js": "^9.0.0",
-    "bip39": "^3.0.2",
+    "bip39": "^2.6.0",
     "eosjs-ecc": "^4.0.4",
     "qrcode": "^1.4.1",
     "scrypt-async": "^2.0.1"
