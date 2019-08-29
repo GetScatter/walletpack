@@ -79,7 +79,7 @@ export default class AppsService {
 			url:'',
 		};
 
-		const found = this.appIsInLocalData(origin);
+		const found = AppsService.appIsInLocalData(origin);
 		if(!found) return emptyResult;
 
 		const maxDescriptionLength = 70;

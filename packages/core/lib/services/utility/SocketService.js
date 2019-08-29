@@ -110,11 +110,11 @@ export default class SocketService {
 		return service.close();
 	}
 
-	static sendEvent(event, payload, origin){
+	static async sendEvent(event, payload, origin){
 		return service.sendEvent(event, payload, origin);
 	}
 
-	static broadcastEvent(event, payload){
+	static async broadcastEvent(event, payload){
 		return service.broadcastEvent(event, payload);
 	}
 

@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "postinstall": "lerna bootstrap",
-    "build": "lerna exec -- babel --out-dir dist lib",
+    "build": "lerna exec -- babel --config-file ../../babel.config.js --out-dir dist lib",
     "links": "lerna exec -- yarn link",
     "publish": "node ./scripts/prepublish.js && lerna publish",
     "testfile": "mocha --require @babel/register --exit --timeout 1000000",
