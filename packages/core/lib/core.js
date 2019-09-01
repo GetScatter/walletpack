@@ -21,6 +21,7 @@ const ScatterCore = {
 			socketService = null,
 			hardwareService = null,
 			publicToPrivate = null,
+			signer = null,
 		},
 	){
 		models.Blockchains.setBlockchains(blockchains, nameParser);
@@ -41,6 +42,7 @@ const ScatterCore = {
 		// from public keys. If only used for certain keys, return `false` on normal keys.
 		// If it returns `null` or `PRIV_KEY` it will resolve that instead of falling back to internals.
 		if(publicToPrivate) services.secure.KeyPairService.init(publicToPrivate);
+		if(signer) services.secure.SigningService.init(signer);
 
 		return true;
 	},

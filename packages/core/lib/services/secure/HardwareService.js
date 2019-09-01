@@ -18,9 +18,9 @@ export default class HardwareService {
 		return hardwareService.checkHardware(account);
 	}
 
-	static async sign(account, payload){
+	static async sign(network, publicKey, payload){
 		if(!hardwareService) return console.error(NO_INIT);
-		return hardwareService.sign(account, payload);
+		return hardwareService.sign(network, publicKey, payload);
 	}
 
 }

@@ -173,9 +173,7 @@ export default class TRX extends Plugin {
 		})
 	}
 
-	async signer(payload, publicKey, arbitrary = false, isHash = false, account = null){
-		if(account && KeyPairService.isHardware(publicKey))
-			return await HardwareService.sign(account, payload);
+	async signer(payload, publicKey, arbitrary = false, isHash = false){
 
 		let privateKey = await KeyPairService.publicToPrivate(publicKey);
 		if (!privateKey) return;

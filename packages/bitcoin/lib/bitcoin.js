@@ -173,7 +173,7 @@ export default class BTC extends Plugin {
 
 	}
 
-	async signer(transaction, publicKey, arbitrary = false, isHash = false, account = null){
+	async signer(transaction, publicKey, arbitrary = false, isHash = false){
 		try {
 			// TODO: No hardware support yet.
 			// if(account && KeyPairService.isHardware(publicKey))

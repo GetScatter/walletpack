@@ -24,6 +24,7 @@ import BalanceService from "../blockchain/BalanceService";
 import StoreService from "../utility/StoreService";
 import Framework from "../utility/Framework";
 import EventService from "../utility/EventService";
+import SigningService from "../../../dist/services/secure/SigningService";
 
 let blocked = [];
 export default class ApiService {
@@ -183,9 +184,7 @@ export default class ApiService {
 
 			const signAndReturn = async (selectedLocation) => {
 				const signatures = await Promise.all(participants.map(async account => {
-					if(KeyPairService.isHardware(account.publicKey)){
-						return HardwareService.sign(account, payload);
-					} else return plugin.signer(payload, account.publicKey)
+					return SigningService.sign(network, payload, account.publicKey);
 				}));
 
 				if(signatures.length !== participants.length) return resolve({id:request.id, result:Error.signatureAccountMissing()});
@@ -258,9 +257,9 @@ export default class ApiService {
 			if(!keypair) return resolve({id:request.id, result:Error.signatureError("signature_rejected", "User rejected the signature request")});
 
 			const blockchain = keypair.publicKeys.find(x => x.key === publicKey).blockchain;
-
-			// Blockchain specific plugin
-			const plugin = PluginRepository.plugin(blockchain);
+			const network = Network.fromJson({
+				blockchain,
+			})
 
 			// Convert buf and abi to messages
 			payload.messages = [{
@@ -274,7 +273,7 @@ export default class ApiService {
 			EventService.emit('popout', Object.assign(request, {})).then( async ({result}) => {
 				if(!result || (!result.accepted || false)) return resolve({id:request.id, result:Error.signatureError("signature_rejected", "User rejected the signature request")});
 
-				resolve({id:request.id, result:await plugin.signer(payload, publicKey, true, false)});
+				resolve({id:request.id, result:await SigningService.sign(network, payload, publicKey, true, false)});
 			});
 		});
 	}
@@ -457,8 +456,11 @@ export default class ApiService {
 				Hasher.unsaltedQuickHash(request.payload.nonce)
 			);
 
-			const plugin = PluginRepository.plugin(Blockchains.EOSIO);
-			const signed = await plugin.signer({data}, publicKey, true, !!isHash);
+			const network = Network.fromJson({
+				blockchain:keypair.publicKeys.find(x => x.key === publicKey).blockchain,
+			});
+
+			const signed = await SigningService.sign(network, {data}, publicKey, true, !!isHash);
 			resolve({id:request.id, result:signed});
 		})
 	}

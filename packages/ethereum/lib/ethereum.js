@@ -217,10 +217,7 @@ export default class ETH extends Plugin {
 		})
 	}
 
-	async signer(transaction, publicKey, arbitrary = false, isHash = false, account = null){
-		if(account && KeyPairService.isHardware(publicKey))
-			return await HardwareService.sign(account, transaction);
-
+	async signer(transaction, publicKey, arbitrary = false, isHash = false){
 		const basePrivateKey = await KeyPairService.publicToPrivate(publicKey);
 		if(!basePrivateKey) return;
 

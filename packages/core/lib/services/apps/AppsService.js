@@ -40,7 +40,7 @@ export default class AppsService {
 	}
 
 	static appIsInLocalData(origin){
-		const dappData = StoreService.get().state.dappData;
+		const dappData = StoreService.get().state.dappData || {};
 		let found = dappData[origin];
 
 		if(!found){
