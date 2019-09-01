@@ -1,6 +1,6 @@
 {
   "name": "@walletpack/eosio",
-  "version": "0.0.22",
+  "version": "0.0.23",
   "description": "> TODO: description",
   "author": "GetScatter Ltd. 2019",
   "homepage": "",
@@ -15,7 +15,7 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@walletpack/core": "^1.0.21",
+    "@walletpack/core": "^1.0.22",
     "eosjs": "^20.0.0",
     "eosjs-ecc": "^4.0.4"
   },
