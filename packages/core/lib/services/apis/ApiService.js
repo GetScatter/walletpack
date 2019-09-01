@@ -24,7 +24,7 @@ import BalanceService from "../blockchain/BalanceService";
 import StoreService from "../utility/StoreService";
 import Framework from "../utility/Framework";
 import EventService from "../utility/EventService";
-import SigningService from "../../../dist/services/secure/SigningService";
+import SigningService from "../../services/secure/SigningService";
 
 let blocked = [];
 export default class ApiService {
