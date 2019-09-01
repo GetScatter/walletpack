@@ -834,9 +834,8 @@ export default class EOS extends Plugin {
 		})
 	}
 
-	async signer(payload, publicKey, arbitrary = false, isHash = false){
-
-		let privateKey = await KeyPairService.publicToPrivate(publicKey);
+	async signer(payload, publicKey, arbitrary = false, isHash = false, privateKey = null){
+		if(!privateKey) privateKey = await KeyPairService.publicToPrivate(publicKey);
 		if (!privateKey) return;
 
 		if(typeof privateKey !== 'string') privateKey = this.bufferToHexPrivate(privateKey);

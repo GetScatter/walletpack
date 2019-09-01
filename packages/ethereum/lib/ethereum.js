@@ -217,13 +217,13 @@ export default class ETH extends Plugin {
 		})
 	}
 
-	async signer(transaction, publicKey, arbitrary = false, isHash = false){
-		const basePrivateKey = await KeyPairService.publicToPrivate(publicKey);
-		if(!basePrivateKey) return;
+	async signer(transaction, publicKey, arbitrary = false, isHash = false, privateKey = null){
+		if(!privateKey) privateKey = await KeyPairService.publicToPrivate(publicKey);
+		if(!privateKey) return;
 
 		const tx = new EthTx(transaction);
-		const privateKey = ethUtil.addHexPrefix(basePrivateKey);
-		tx.sign(ethUtil.toBuffer(privateKey));
+		const formattedKey = ethUtil.addHexPrefix(privateKey);
+		tx.sign(ethUtil.toBuffer(formattedKey));
 		return ethUtil.addHexPrefix(tx.serialize().toString('hex'));
 	}
 

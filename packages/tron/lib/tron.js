@@ -173,9 +173,9 @@ export default class TRX extends Plugin {
 		})
 	}
 
-	async signer(payload, publicKey, arbitrary = false, isHash = false){
+	async signer(payload, publicKey, arbitrary = false, isHash = false, privateKey = null){
 
-		let privateKey = await KeyPairService.publicToPrivate(publicKey);
+		if(!privateKey) privateKey = await KeyPairService.publicToPrivate(publicKey);
 		if (!privateKey) return;
 
 		if(typeof privateKey !== 'string') privateKey = this.bufferToHexPrivate(privateKey);

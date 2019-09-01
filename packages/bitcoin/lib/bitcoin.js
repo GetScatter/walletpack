@@ -173,16 +173,16 @@ export default class BTC extends Plugin {
 
 	}
 
-	async signer(transaction, publicKey, arbitrary = false, isHash = false){
+	async signer(transaction, publicKey, arbitrary = false, isHash = false, privateKey = null){
 		try {
 			// TODO: No hardware support yet.
 			// if(account && KeyPairService.isHardware(publicKey))
 			// 	return await HardwareService.sign(account, transaction);
 
-			const basePrivateKey = await KeyPairService.publicToPrivate(publicKey);
-			if(!basePrivateKey) return;
+			if(!privateKey) privateKey = await KeyPairService.publicToPrivate(publicKey);
+			if(!privateKey) return;
 
-			const key = bitcoin.ECPair.fromPrivateKey(Buffer.from(basePrivateKey), {network:SELECTED_NETWORK});
+			const key = bitcoin.ECPair.fromPrivateKey(Buffer.from(privateKey), {network:SELECTED_NETWORK});
 			const txb = bitcoin.TransactionBuilder.fromTransaction(bitcoin.Transaction.fromHex(transaction), SELECTED_NETWORK)
 
 			if(Object.keys(txb.__PREV_TX_SET).length > 1){
