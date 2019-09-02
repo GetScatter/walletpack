@@ -9,6 +9,8 @@ import StoreService from                "@walletpack/core/services/utility/Store
 import * as Actions from                "@walletpack/core/models/api/ApiActions";
 import {GET, POST} from                 "@walletpack/core/services/apis/BackendApiService";
 import EventService from                "@walletpack/core/services/utility/EventService";
+import SigningService from              "@walletpack/core/services/secure/SigningService";
+
 const bitcoin = require('bitcoinjs-lib');
 
 
@@ -150,7 +152,7 @@ export default class BTC extends Plugin {
 					blockchain:Blockchains.BTC, network:account.network(), requiredFields:{}, abi:null };
 				const signed = promptForSignature
 					? await this.signerWithPopup(payload, account, x => resolve(x), null)
-					: await this.signer(payload.unsigned, account.publicKey, false, false, account);
+					: await SigningService.sign(account.network(), payload.unsigned, account.publicKey, false, false);
 
 				if(!signed) return;
 
@@ -227,7 +229,7 @@ export default class BTC extends Plugin {
 				// 	signature = await HardwareService.sign(account, payload);
 				// } else signature = await this.signer(payload.transaction, account.publicKey, true);
 
-				const signature = await this.signer(payload.unsigned, account.publicKey, true);
+				const signature = await SigningService.sign(payload.network, payload.unsigned, account.publicKey, true);
 				if(!signature) return rejector({error:'Could not get signature'});
 				resolve(signature);
 			})

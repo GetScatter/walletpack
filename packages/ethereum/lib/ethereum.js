@@ -10,6 +10,7 @@ import HardwareService from             "@walletpack/core/services/secure/Hardwa
 import TokenService from                "@walletpack/core/services/utility/TokenService";
 import StoreService from                "@walletpack/core/services/utility/StoreService";
 import EventService from                "@walletpack/core/services/utility/EventService";
+import SigningService from              "@walletpack/core/services/secure/SigningService";
 
 import Web3 from 'web3';
 import ProviderEngine from 'web3-provider-engine';
@@ -183,7 +184,7 @@ export default class ETH extends Plugin {
 				const payload = { transaction, blockchain:Blockchains.TRX, network:account.network(), requiredFields:{}, abi:isEth ? null : erc20abi };
 				const signatures = promptForSignature
 					? await this.signerWithPopup(payload, account, x => finished(x), token)
-					: await this.signer(payload, account.publicKey, false, false, account);
+					: await SigningService.sign(account.network(), payload, account.publicKey, false, false);
 
 				if(callback) callback(null, signatures);
 				return signatures;
@@ -249,7 +250,7 @@ export default class ETH extends Plugin {
 				let signature = null;
 				if(KeyPairService.isHardware(account.publicKey)){
 					signature = await HardwareService.sign(account, payload);
-				} else signature = await this.signer(payload.transaction, account.publicKey, true);
+				} else signature = await SigningService.sign(payload.network, payload.transaction, account.publicKey, true);
 
 				if(!signature) return rejector({error:'Could not get signature'});
 

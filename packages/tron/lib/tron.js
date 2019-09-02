@@ -9,6 +9,7 @@ import HardwareService from             "@walletpack/core/services/secure/Hardwa
 import StoreService from                "@walletpack/core/services/utility/StoreService";
 import TokenService from                "@walletpack/core/services/utility/TokenService";
 import EventService from                "@walletpack/core/services/utility/EventService";
+import SigningService from              "@walletpack/core/services/secure/SigningService";
 
 import TronWeb from 'tronweb';
 const ethUtil = require('ethereumjs-util');
@@ -145,7 +146,7 @@ export default class TRX extends Plugin {
 				const payload = { transaction, blockchain:Blockchains.TRX, network:account.network(), requiredFields:{} };
 				return promptForSignature
 					? await this.signerWithPopup(payload, account, reject)
-					: await this.signer(payload, account.publicKey, false, false, account);
+					: await SigningService.sign(account.network(), payload, account.publicKey, false, false);
 			};
 
 			let unsignedTransaction;
@@ -205,7 +206,7 @@ export default class TRX extends Plugin {
 				let signature = null;
 				if(KeyPairService.isHardware(account.publicKey)){
 					signature = await HardwareService.sign(account, payload);
-				} else signature = await this.signer(payload, account.publicKey);
+				} else signature = await SigningService.sign(payload.network, payload, account.publicKey);
 
 				if(!signature) return rejector({error:'Could not get signature'});
 

@@ -14,6 +14,7 @@ import HardwareService from         "@walletpack/core/services/secure/HardwareSe
 import HistoricAction from          "@walletpack/core/models/histories/HistoricAction";
 import StoreService from            "@walletpack/core/services/utility/StoreService";
 import EventService from            "@walletpack/core/services/utility/EventService";
+import SigningService from          "@walletpack/core/services/secure/SigningService";
 import ecc from 'eosjs-ecc';
 import { Api, JsonRpc, RpcError, JsSignatureProvider } from 'eosjs';
 import * as numeric from "eosjs/dist/eosjs-numeric";
@@ -819,7 +820,7 @@ export default class EOS extends Plugin {
 				let signatures = [];
 				for(let i = 0; i < accounts.length; i++){
 					let account = accounts[i];
-					signatures.push(await this.signer(KeyPairService.isHardware(account.publicKey) ? payload : {data:payload.buf}, account.publicKey, true, false, account));
+					signatures.push(await SigningService.sign(payload.network, KeyPairService.isHardware(account.publicKey) ? payload : {data:payload.buf}, account.publicKey, true, false));
 
 					if(signatures.length !== i+1) return rejector({error:'Could not get signature'});
 				}
