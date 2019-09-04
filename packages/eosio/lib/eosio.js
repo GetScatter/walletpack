@@ -179,7 +179,9 @@ export default class EOS extends Plugin {
 		const isSingleAccount = accounts instanceof Account;
 		return {
 			getAvailableKeys:async () => isSingleAccount ? [accounts.publicKey] : accounts.map(x => x.publicKey),
-			sign:async (transaction) => this.signerWithPopup({ transaction }, accounts, reject)
+			sign:async (transaction) => this.signerWithPopup({ transaction }, accounts, reject).then(signatures => {
+				return {signatures, serializedTransaction:transaction.serializedTransaction}
+			})
 		}
 	}
 
