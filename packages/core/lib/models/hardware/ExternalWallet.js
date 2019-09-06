@@ -8,7 +8,7 @@ let WALLETS = [];
 export default class ExternalWallet {
 
     static loadWallets(_wallets){
-	    EXT_WALLET_TYPES = _wallets.map(x => ({[x.id]:x.name}));
+	    EXT_WALLET_TYPES = _wallets.map(x => ({[x.type]:x.name}));
         WALLETS = _wallets;
     }
 
@@ -16,15 +16,16 @@ export default class ExternalWallet {
         this.id = IdGenerator.text(64);
         this.type = _type;
         this.blockchain = _blockchain;
-        this.interface = getInterface(_type, _blockchain);
         this.addressIndex = 0;
     }
 
     static placeholder(){ return new ExternalWallet(); }
     static fromJson(json){
-        let p = Object.assign(this.placeholder(), json);
-        p.interface = getInterface(p.type, p.blockchain);
-        return p;
+        return Object.assign(this.placeholder(), json);
+    }
+
+    setup(){
+        this.interface = getInterface(this.type, this.blockchain);
     }
 }
 
