@@ -79,6 +79,12 @@ WalletPack.initialize(
 		// external services
 		publicToPrivate:async publicKey => {
 			return false;
+		},
+		// Allows you to have custom signers instead of key provision, 
+		// which means you can sign on completely separate processes instead
+		// of giving the private key to the renderer process
+		signer:async (network, publicKey, payload, arbitrary = false, isHash = false){
+		  return sign(...);
 		}
 	}
 );
