@@ -98,7 +98,7 @@ export default class ApiService {
 			    return resolve({id:request.id, result:Error.noNetwork()});
 		    }
 
-		    const availableAccounts = existingNetworks.map(x => x.accounts(true)).reduce((acc, accounts) => {
+		    const availableAccounts = existingNetworks.map(x => x.accounts()).reduce((acc, accounts) => {
 			    acc = acc.concat(accounts);
 			    return acc;
 		    }, []);
