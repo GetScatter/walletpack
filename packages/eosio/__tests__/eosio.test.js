@@ -1,7 +1,7 @@
-// 'use strict';
-//
-// const eosio = require('..');
-//
-// describe('eosio', () => {
-//     it('needs tests');
-// });
+'use strict';
+
+const eosio = require('../lib/eosio');
+
+describe('eosio', () => {
+    it('needs tests');
+});
