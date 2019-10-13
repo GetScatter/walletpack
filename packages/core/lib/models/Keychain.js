@@ -118,7 +118,7 @@ export default class Keychain {
         const accountUniques = this.accounts.map(x => x.unique());
 	    StoreService.get().state.history.map(x => {
 		    const acc = Account.fromJson(x.type === 'action' ? x.account : x.from);
-		    if(keypairUniques.includes(acc.keypairUnique) || accountUniques.includes(acc.unique())) {
+		    if(!keypairUniques.includes(acc.keypairUnique) || !accountUniques.includes(acc.unique())) {
 		        StoreService.get().dispatch(Actions.DELTA_HISTORY, x);
 		    }
 	    });
