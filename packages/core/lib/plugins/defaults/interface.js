@@ -34,6 +34,9 @@ export default class PluginInterface extends Plugin {
 
 	accountsAreImported(){ return false; }
 
+	hasFees(){ return false; }
+	getFees(){ return null; }
+
 	isValidRecipient(name){}
 
 	privateToPublic(privateKey, prefix = null){}

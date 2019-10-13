@@ -4,6 +4,8 @@ import Keypair from './Keypair';
 import Account from './Account';
 import AuthorizedApp from './AuthorizedApp';
 import CreditCard from "./CreditCard";
+import StoreService from "../services/utility/StoreService";
+import * as Actions from "../store/constants";
 
 export default class Keychain {
 
@@ -94,6 +96,7 @@ export default class Keychain {
         this.permissions = this.permissions.filter(x => !x.accounts.some(a => accountsToRemove.includes(a)));
         this.accounts = this.accounts.filter(x => x.keypairUnique !== keypair.unique());
         this.keypairs = this.keypairs.filter(key => key.unique() !== keypair.unique());
+        this.correctHistories();
         this.correctAppLinks();
     }
 
@@ -106,7 +109,19 @@ export default class Keychain {
         const accountsToRemove = this.accounts.filter(x => x.unique() === account.unique()).map(x => x.unique());
         this.permissions = this.permissions.filter(x => !x.accounts.some(a => accountsToRemove.includes(a)));
         this.accounts = this.accounts.filter(a => a.unique() !== account.unique());
+	    this.correctHistories();
 	    this.correctAppLinks();
+    }
+
+    correctHistories(){
+        const keypairUniques = this.keypairs.map(x => x.unique());
+        const accountUniques = this.accounts.map(x => x.unique());
+	    StoreService.get().state.history.map(x => {
+		    const acc = Account.fromJson(x.type === 'action' ? x.account : x.from);
+		    if(keypairUniques.includes(acc.keypairUnique) || accountUniques.includes(acc.unique())) {
+		        StoreService.get().dispatch(Actions.DELTA_HISTORY, x);
+		    }
+	    });
     }
 
 	correctAppLinks(){

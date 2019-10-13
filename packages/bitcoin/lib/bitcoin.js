@@ -145,7 +145,7 @@ export default class BTC extends Plugin {
 
 				// Returning unspent to sender.
 				const change = inputs - (amount + fee);
-				if(change < 0) return resolve({error:`Insufficient BTC: ${inputs}. (Possibly related to utxos, contact support)`});
+				if(change < 0) return resolve({error:`Insufficient BTC: ${inputs}. (Most likely due to fees, you need to leave ${fee} worth)`});
 				if (change) txb.addOutput(account.publicKey, change);
 
 				const payload = { transaction:{from:account.publicKey, to, amount:amount / 100000000, fee:fee / 100000000}, unsigned:txb.buildIncomplete().toHex(),

@@ -183,5 +183,5 @@ export default class KeyPairService {
 		if(!keypair) throw new Error('Keypair doesnt exist on keychain');
 		return keypair.external !== null;
 	}
-    
+
 }
