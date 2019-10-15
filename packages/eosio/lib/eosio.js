@@ -237,7 +237,7 @@ export default class EOS extends Plugin {
 	async proxyVote(account, proxyAccount, prompt = false){
 		return new Promise(async (resolve, reject) => {
 
-			const eos = this.getSignableEosjs(account, reject);
+			const eos = this.getSignableEosjs(account, reject, prompt);
 
 			await eos.transact({
 				actions:[{
