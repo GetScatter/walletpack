@@ -18,9 +18,10 @@ import SigningService from          "@walletpack/core/services/secure/SigningSer
 import ecc from 'eosjs-ecc';
 import { Api, JsonRpc, RpcError, JsSignatureProvider } from 'eosjs';
 import * as numeric from "eosjs/dist/eosjs-numeric";
+import {POST} from "@walletpack/core/lib/services/apis/BackendApiService";
 
-export const TextEncoder = require('util') ? require('util').TextEncoder : require('text-encoding') ? require('text-encoding').TextEncoder : null;
-export const TextDecoder = require('util') ? require('util').TextDecoder : require('text-encoding') ? require('text-encoding').TextDecoder : null;
+export const TextEncoder = global.TextEncoder ? global.TextEncoder : require('util') ? require('util').TextEncoder : require('text-encoding') ? require('text-encoding').TextEncoder : null;
+export const TextDecoder = global.TextDecoder ? global.TextDecoder : require('util') ? require('util').TextDecoder : require('text-encoding') ? require('text-encoding').TextDecoder : null;
 export const encoderOptions = TextEncoder ? {textEncoder:new TextEncoder(), textDecoder:new TextDecoder()} : {};
 
 const getEosjsApi = rpc => {
@@ -859,7 +860,14 @@ export default class EOS extends Plugin {
 			}));
 	}
 
-	async fetchAbis(network, contracts){
+	async fetchAbis(network, contracts, fallbackToChain = false){
+
+		if(!fallbackToChain){
+			const abis = await POST(`walletpack/abis`, {networks, contracts});
+			if(!abis || !abis.length !== contracts.length) return this.fetchAbis(network, contracts, true);
+			return abis;
+		}
+
 		try {
 			return await Promise.all(contracts.map(async account => {
 				const chainAbi = await getChainData(network, `get_raw_abi`, {account_name:account}).catch(() => null).then(x => x.abi);
