@@ -1,6 +1,6 @@
 {
   "name": "@walletpack/ethereum",
-  "version": "0.0.29",
+  "version": "0.0.30",
   "description": "> TODO: description",
   "author": "GetScatter Ltd. 2019",
   "homepage": "",
@@ -15,7 +15,7 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@walletpack/core": "^1.0.26",
+    "@walletpack/core": "^1.0.27",
     "ethereumjs-tx": "^2.1.0",
     "ethereumjs-util": "^6.1.0",
     "web3": "^1.2.0",
