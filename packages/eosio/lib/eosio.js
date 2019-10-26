@@ -10,15 +10,14 @@ import * as StoreActions from       '@walletpack/core/store/constants'
 import Token from                   "@walletpack/core/models/Token";
 import AccountAction from           "@walletpack/core/models/AccountAction";
 import AccountService from          "@walletpack/core/services/blockchain/AccountService";
-import HardwareService from         "@walletpack/core/services/secure/HardwareService";
 import HistoricAction from          "@walletpack/core/models/histories/HistoricAction";
 import StoreService from            "@walletpack/core/services/utility/StoreService";
 import EventService from            "@walletpack/core/services/utility/EventService";
 import SigningService from          "@walletpack/core/services/secure/SigningService";
+import {POST} from                  "@walletpack/core/services/apis/BackendApiService";
 import ecc from 'eosjs-ecc';
 import { Api, JsonRpc, RpcError, JsSignatureProvider } from 'eosjs';
 import * as numeric from "eosjs/dist/eosjs-numeric";
-import {POST} from "@walletpack/core/lib/services/apis/BackendApiService";
 
 export const TextEncoder = global.TextEncoder ? global.TextEncoder : require('util') ? require('util').TextEncoder : require('text-encoding') ? require('text-encoding').TextEncoder : null;
 export const TextDecoder = global.TextDecoder ? global.TextDecoder : require('util') ? require('util').TextDecoder : require('text-encoding') ? require('text-encoding').TextDecoder : null;
