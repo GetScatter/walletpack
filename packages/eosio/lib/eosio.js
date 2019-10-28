@@ -862,7 +862,7 @@ export default class EOS extends Plugin {
 	async fetchAbis(network, contracts, fallbackToChain = false){
 
 		if(!fallbackToChain){
-			const abis = await POST(`walletpack/abis`, {networks, contracts});
+			const abis = await POST(`walletpack/abis`, {network, contracts});
 			if(!abis || !abis.length !== contracts.length) return this.fetchAbis(network, contracts, true);
 			return abis;
 		}
