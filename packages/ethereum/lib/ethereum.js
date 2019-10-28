@@ -21,7 +21,6 @@ const EthTx = require('ethereumjs-tx').Transaction
 const ethUtil = require('ethereumjs-util');
 const web3util = new Web3();
 
-
 const toBuffer = key => ethUtil.toBuffer(ethUtil.addHexPrefix(key));
 
 let cachedInstances = {};
