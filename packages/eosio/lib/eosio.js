@@ -19,8 +19,8 @@ import ecc from 'eosjs-ecc';
 import { Api, JsonRpc } from 'eosjs';
 import * as numeric from "eosjs/dist/eosjs-numeric";
 
-export const TextEncoder = global.TextEncoder ? global.TextEncoder : require('util') ? require('util').TextEncoder : require('text-encoding') ? require('text-encoding').TextEncoder : null;
-export const TextDecoder = global.TextDecoder ? global.TextDecoder : require('util') ? require('util').TextDecoder : require('text-encoding') ? require('text-encoding').TextDecoder : null;
+export const TextEncoder = require('util') ? require('util').TextEncoder : require('text-encoding') ? require('text-encoding').TextEncoder : global.TextEncoder;
+export const TextDecoder = require('util') ? require('util').TextDecoder : require('text-encoding') ? require('text-encoding').TextDecoder : global.TextDecoder;
 export const encoderOptions = TextEncoder ? {textEncoder:new TextEncoder(), textDecoder:new TextDecoder()} : {};
 
 const getEosjsApi = rpc => {
