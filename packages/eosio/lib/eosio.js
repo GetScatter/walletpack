@@ -16,7 +16,7 @@ import EventService from            "@walletpack/core/services/utility/EventServ
 import SigningService from          "@walletpack/core/services/secure/SigningService";
 import {POST} from                  "@walletpack/core/services/apis/BackendApiService";
 import ecc from 'eosjs-ecc';
-import { Api, JsonRpc, RpcError, JsSignatureProvider } from 'eosjs';
+import { Api, JsonRpc } from 'eosjs';
 import * as numeric from "eosjs/dist/eosjs-numeric";
 
 export const TextEncoder = global.TextEncoder ? global.TextEncoder : require('util') ? require('util').TextEncoder : require('text-encoding') ? require('text-encoding').TextEncoder : null;
@@ -484,7 +484,7 @@ export default class EOS extends Plugin {
 	}
 
 	bufferToHexPrivate(buffer){
-		return ecc.PrivateKey.fromBuffer(new Buffer(buffer)).toString()
+		return ecc.PrivateKey.fromBuffer(Buffer.from(buffer)).toString()
 	}
 	hexPrivateToBuffer(privateKey){
 		return new ecc.PrivateKey(privateKey).toBuffer();
@@ -862,7 +862,10 @@ export default class EOS extends Plugin {
 	async fetchAbis(network, contracts, fallbackToChain = false){
 
 		if(!fallbackToChain){
-			const abis = await POST(`walletpack/abis`, {network, contracts});
+			const abis = await Promise.race([
+				POST(`walletpack/abis`, {network, accounts:contracts}).catch(() => null),
+				new Promise(r => setTimeout(() => r(null), 2000)),
+			]);
 			if(!abis || !abis.length !== contracts.length) return this.fetchAbis(network, contracts, true);
 			return abis;
 		}
@@ -897,9 +900,9 @@ export default class EOS extends Plugin {
 			});
 
 			payload.buf = Buffer.concat([
-				new Buffer(network.chainId, "hex"),                             // Chain ID
+				Buffer.from(network.chainId, "hex"),                             // Chain ID
 				Buffer.from(api.serializeTransaction(transaction), 'hex'),      // Transaction
-				new Buffer(new Uint8Array(32)),                                 // Context free actions
+				Buffer.from(new Uint8Array(32)),                                 // Context free actions
 			]);
 
 			payload.transaction.parsed = Object.assign({}, transaction);
@@ -930,9 +933,9 @@ export default class EOS extends Plugin {
 		});
 
 		payload.buf = Buffer.concat([
-			new Buffer(transaction.chainId, "hex"),         // Chain ID
+			Buffer.from(transaction.chainId, "hex"),         // Chain ID
 			buffer,                                         // Transaction
-			new Buffer(new Uint8Array(32)),                 // Context free actions
+			Buffer.from(new Uint8Array(32)),                 // Context free actions
 		]);
 
 		payload.transaction.parsed = Object.assign({}, parsed);
