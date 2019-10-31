@@ -190,7 +190,7 @@ export default class TRX extends Plugin {
 				const contract = await tron.contract(trc20abi).at(token.contract);
 				const {inputs, functionSelector, defaultOptions} = contract.methodInstances.transfer;
 				defaultOptions.from = account.publicKey;
-				unsignedTransaction = await tron.transactionBuilder.triggerSmartContract(
+				unsignedTransaction = (await tron.transactionBuilder.triggerSmartContract(
 					token.contract,
 					functionSelector,
 					defaultOptions,
@@ -201,7 +201,7 @@ export default class TRX extends Plugin {
 						}
 					}),
 					tron.address.toHex(account.publicKey)
-				);
+				)).transaction;
 			}
 
 			else {

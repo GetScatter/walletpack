@@ -77,7 +77,7 @@ describe('tron', () => {
 				account,
 				// Random address
 				to:'TU9Rpk8YqTea5oYx1h26a2P6vsGn8faRBt',
-				amount:'100',
+				amount:'1',
 				token,
 				promptForSignature:false
 			});
