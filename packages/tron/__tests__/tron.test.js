@@ -45,13 +45,31 @@ account.network = () => network;
 account.sendable = () => account.publicKey;
 
 describe('tron', () => {
-    it('should be able to get trc20 balances', done => {
-    	new Promise(async() => {
-			const balances = await tron.balancesFor(account, [token]);
-			console.log('balances', balances);
-    		done();
-	    })
-    });
+    // it('should be able to get trc20 balances', done => {
+    // 	new Promise(async() => {
+	// 		const balances = await tron.balancesFor(account, [token]);
+	// 		console.log('balances', balances);
+    // 		done();
+	//     })
+    // });
+
+    // it('should be able to parse trc20 transactions', done => {
+    // 	new Promise(async() => {
+	//
+    // 		const json = `transaction {"transaction":{"transaction":{},"participants":["TF2quv1hTipcZ8FJ8FRsXXLSiJ1C15dqkW"]},"blockchain":"trx","network":{"id":"216730975559","name":"Tron Mainnet","protocol":"https","host":"api.trongrid.io","port":443,"path":"","blockchain":"trx","chainId":"1","fromOrigin":null,"createdAt":1571601826773,"token":null},"requiredFields":{}}`;
+	//
+	// 		const transfer = await tron.transfer({
+	// 			account,
+	// 			// Random address
+	// 			to:'TU9Rpk8YqTea5oYx1h26a2P6vsGn8faRBt',
+	// 			amount:'100',
+	// 			token,
+	// 			promptForSignature:false
+	// 		});
+	// 		console.log('transfer', transfer);
+    // 		done();
+	//     })
+    // });
 
     it('should be able to send trc20 tokens', done => {
     	new Promise(async() => {

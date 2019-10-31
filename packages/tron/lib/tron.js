@@ -1,15 +1,17 @@
-import Plugin from                      '@walletpack/core/plugins/Plugin';
-import * as PluginTypes from            '@walletpack/core/plugins/PluginTypes';
-import * as Actions from                '@walletpack/core/models/api/ApiActions';
-import {Blockchains} from               '@walletpack/core/models/Blockchains'
-import Network from                     '@walletpack/core/models/Network'
-import KeyPairService from              '@walletpack/core/services/secure/KeyPairService';
-import Token from                       "@walletpack/core/models/Token";
-import HardwareService from             "@walletpack/core/services/secure/HardwareService";
-import StoreService from                "@walletpack/core/services/utility/StoreService";
-import TokenService from                "@walletpack/core/services/utility/TokenService";
-import EventService from                "@walletpack/core/services/utility/EventService";
-import SigningService from              "@walletpack/core/services/secure/SigningService";
+const dir = process.env.WALLETPACK_TESTING ? '@walletpack/core/dist/' : '@walletpack/core/'
+
+const PluginTypes = require(`${dir}plugins/PluginTypes`);
+const Actions = require(`${dir}models/api/ApiActions`);
+const {Blockchains} = require(`${dir}models/Blockchains`);
+const Plugin = require(`${dir}plugins/Plugin`).default;
+const Network = require(`${dir}models/Network`).default;
+const KeyPairService = require(`${dir}services/secure/KeyPairService`).default;
+const Token = require(`${dir}models/Token`).default;
+const HardwareService = require(`${dir}services/secure/HardwareService`).default;
+const StoreService = require(`${dir}services/utility/StoreService`).default;
+const TokenService = require(`${dir}services/utility/TokenService`).default;
+const EventService = require(`${dir}services/utility/EventService`).default;
+const SigningService = require(`${dir}services/secure/SigningService`).default;
 
 import TronWeb from 'tronweb';
 const ethUtil = require('ethereumjs-util');
@@ -160,6 +162,10 @@ export default class TRX extends Plugin {
 		return new Promise(async (resolve, reject) => {
 			const tron = getCachedInstance(account.network());
 
+			const isTRX = token.unique() === this.defaultToken().unique();
+			const isTRC10 = !isTRX && !token.contract || !token.contract.length;
+			const isTRC20 = !isTRX && !isTRC10;
+
 			tron.trx.sign = async signargs => {
 				const transaction = { transaction:signargs, participants:[account.publicKey], };
 				const payload = { transaction, blockchain:Blockchains.TRX, network:account.network(), requiredFields:{} };
@@ -171,20 +177,38 @@ export default class TRX extends Plugin {
 			let unsignedTransaction;
 
 			// SENDING TRX
-			if(token.unique() === this.defaultToken().unique()) {
+			if(isTRX) {
 				unsignedTransaction = await tron.transactionBuilder.sendTrx(to, amount, account.publicKey);
 			}
 
 			// Sending built-in alt token
-			else if (!token.contract || !token.contract.length){
+			else if (isTRC10){
 				tron.setAddress(account.sendable());
 				unsignedTransaction = await tron.transactionBuilder.sendToken(to, amount, token.symbol);
 			}
 
 			// Sending TRC20 alt token
-			else {
+			else if (isTRC20) {
 				const contract = await tron.contract(trc20abi).at(token.contract);
-				unsignedTransaction = await contract.transfer(to, amount);
+				const {inputs, functionSelector, defaultOptions} = contract.methodInstances.transfer;
+				defaultOptions.from = account.publicKey;
+				unsignedTransaction = await tron.transactionBuilder.triggerSmartContract(
+					token.contract,
+					functionSelector,
+					defaultOptions,
+					inputs.map(({name, type}) => {
+						return {
+							type,
+							value:type === 'address' ? to : amount
+						}
+					}),
+					tron.address.toHex(account.publicKey)
+				);
+			}
+
+			else {
+				console.error('Not TRX, TRC10, or TRC20!')
+				return resolve(null);
 			}
 
 			const signed = await tron.trx.sign(unsignedTransaction)
