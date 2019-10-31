@@ -164,9 +164,10 @@ export default class TRX extends Plugin {
 			const isTRC10 = !isTRX && !token.contract || !token.contract.length;
 			const isTRC20 = !isTRX && !isTRC10;
 
+			let abi = null;
 			tron.trx.sign = async signargs => {
 				const transaction = { transaction:signargs, participants:[account.publicKey], };
-				const payload = { transaction, blockchain:Blockchains.TRX, network:account.network(), requiredFields:{} };
+				const payload = { transaction, blockchain:Blockchains.TRX, network:account.network(), requiredFields:{}, abi };
 				return promptForSignature
 					? await this.signerWithPopup(payload, account, reject)
 					: await SigningService.sign(account.network(), payload, account.publicKey, false, false);
@@ -187,7 +188,8 @@ export default class TRX extends Plugin {
 
 			// Sending TRC20 alt token
 			else if (isTRC20) {
-				const contract = await tron.contract(trc20abi).at(token.contract);
+				abi = trc20abi;
+				const contract = await tron.contract(abi).at(token.contract);
 				const {inputs, functionSelector, defaultOptions} = contract.methodInstances.transfer;
 				defaultOptions.from = account.publicKey;
 				unsignedTransaction = (await tron.transactionBuilder.triggerSmartContract(

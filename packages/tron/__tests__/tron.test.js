@@ -45,6 +45,13 @@ account.network = () => network;
 account.sendable = () => account.publicKey;
 
 describe('tron', () => {
+    it('should be able to init', done => {
+    	new Promise(async() => {
+		    tron.init();
+    		done();
+	    })
+    });
+
     // it('should be able to get trc20 balances', done => {
     // 	new Promise(async() => {
 	// 		const balances = await tron.balancesFor(account, [token]);
@@ -71,18 +78,18 @@ describe('tron', () => {
 	//     })
     // });
 
-    it('should be able to send trc20 tokens', done => {
-    	new Promise(async() => {
-			const transfer = await tron.transfer({
-				account,
-				// Random address
-				to:'TU9Rpk8YqTea5oYx1h26a2P6vsGn8faRBt',
-				amount:'1',
-				token,
-				promptForSignature:false
-			});
-			console.log('transfer', transfer);
-    		done();
-	    })
-    });
+    // it('should be able to send trc20 tokens', done => {
+    // 	new Promise(async() => {
+	// 		const transfer = await tron.transfer({
+	// 			account,
+	// 			// Random address
+	// 			to:'TU9Rpk8YqTea5oYx1h26a2P6vsGn8faRBt',
+	// 			amount:'1',
+	// 			token,
+	// 			promptForSignature:false
+	// 		});
+	// 		console.log('transfer', transfer);
+    // 		done();
+	//     })
+    // });
 });
