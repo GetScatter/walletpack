@@ -1,17 +1,15 @@
-const dir = process.env.WALLETPACK_TESTING ? '@walletpack/core/dist/' : '@walletpack/core/'
-
-const PluginTypes = require(`${dir}plugins/PluginTypes`);
-const Actions = require(`${dir}models/api/ApiActions`);
-const {Blockchains} = require(`${dir}models/Blockchains`);
-const Plugin = require(`${dir}plugins/Plugin`).default;
-const Network = require(`${dir}models/Network`).default;
-const KeyPairService = require(`${dir}services/secure/KeyPairService`).default;
-const Token = require(`${dir}models/Token`).default;
-const HardwareService = require(`${dir}services/secure/HardwareService`).default;
-const StoreService = require(`${dir}services/utility/StoreService`).default;
-const TokenService = require(`${dir}services/utility/TokenService`).default;
-const EventService = require(`${dir}services/utility/EventService`).default;
-const SigningService = require(`${dir}services/secure/SigningService`).default;
+import Plugin from                      '@walletpack/core/plugins/Plugin';
+import * as PluginTypes from            '@walletpack/core/plugins/PluginTypes';
+import * as Actions from                '@walletpack/core/models/api/ApiActions';
+import {Blockchains} from               '@walletpack/core/models/Blockchains'
+import Network from                     '@walletpack/core/models/Network'
+import KeyPairService from              '@walletpack/core/services/secure/KeyPairService';
+import Token from                       "@walletpack/core/models/Token";
+import HardwareService from             "@walletpack/core/services/secure/HardwareService";
+import StoreService from                "@walletpack/core/services/utility/StoreService";
+import TokenService from                "@walletpack/core/services/utility/TokenService";
+import EventService from                "@walletpack/core/services/utility/EventService";
+import SigningService from              "@walletpack/core/services/secure/SigningService";
 
 import TronWeb from 'tronweb';
 const ethUtil = require('ethereumjs-util');
