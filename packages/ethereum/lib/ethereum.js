@@ -177,7 +177,7 @@ export default class ETH extends Plugin {
 
 
 	async transfer({account, to, amount, token, promptForSignature = true}){
-		const {contract, symbol} = token;
+		const {symbol} = token;
 		const isEth = token.uniqueWithChain() === this.defaultToken().uniqueWithChain();
 		return new Promise(async (resolve, reject) => {
 			const wallet = new ScatterEthereumWallet(account, async (transaction, callback) => {

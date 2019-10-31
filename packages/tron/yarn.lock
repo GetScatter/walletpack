@@ -21,10 +21,10 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-10.14.13.tgz#ac786d623860adf39a3f51d629480aacd6a6eec7"
   integrity sha512-yN/FNNW1UYsRR1wwAoyOwqvDuLDtVXnaJTZ898XIw/Q5cCaeVAlVwvsmXLX5PuiScBYwZsZU4JYSHB3TvfdwvQ==
 
-"@walletpack/core@^1.0.27":
-  version "1.0.27"
-  resolved "https://registry.yarnpkg.com/@walletpack/core/-/core-1.0.27.tgz#e2eb1e8e225cde272a6beb8c39851a6d1b1a67db"
-  integrity sha512-ruQzK0kl1Z/xwcIts/ew6/5gAtZuVESBRlphGBG5MLBerrxS4b3m+iJKrxw8TtXXhUZuNTi/rxg4ZXh/n1VIZQ==
+"@walletpack/core@^1.0.29":
+  version "1.0.29"
+  resolved "https://registry.yarnpkg.com/@walletpack/core/-/core-1.0.29.tgz#514b6ab45ae7c61d92369219c0268886bbea9e47"
+  integrity sha512-gGiNR4yaGzvHZGbU8TPwMzOAnsXAIPBR/2MKd689fIbqz/pa7m6TK7s0iYeKXPp1KAo6CK6KbTj725wtQMWpMQ==
   dependencies:
     aes-oop "^1.0.4"
     bignumber.js "^9.0.0"
@@ -711,7 +711,7 @@ strip-hex-prefix@1.0.0:
   dependencies:
     is-hex-prefixed "1.0.0"
 
-tronweb@^2.6.4:
+tronweb@^2.8.0:
   version "2.8.0"
   resolved "https://registry.yarnpkg.com/tronweb/-/tronweb-2.8.0.tgz#e70247486590376a4ee3497d4c5dd66aa5f312d6"
   integrity sha512-B5vn2TsH8hV9z7jvxlmMlIcKjd+qq7TS4p5E1w4422FJ1tBVe3cQqQZ0YP09aj/9k6eJQsGdWfBB1WYQQb0d5Q==

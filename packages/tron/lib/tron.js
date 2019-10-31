@@ -1,19 +1,20 @@
-import Plugin from                      '@walletpack/core/plugins/Plugin';
-import * as PluginTypes from            '@walletpack/core/plugins/PluginTypes';
-import * as Actions from                '@walletpack/core/models/api/ApiActions';
-import {Blockchains} from               '@walletpack/core/models/Blockchains'
-import Network from                     '@walletpack/core/models/Network'
-import KeyPairService from              '@walletpack/core/services/secure/KeyPairService';
-import Token from                       "@walletpack/core/models/Token";
-import HardwareService from             "@walletpack/core/services/secure/HardwareService";
-import StoreService from                "@walletpack/core/services/utility/StoreService";
-import TokenService from                "@walletpack/core/services/utility/TokenService";
-import EventService from                "@walletpack/core/services/utility/EventService";
-import SigningService from              "@walletpack/core/services/secure/SigningService";
+import Plugin from                      '@walletpack/core/dist/plugins/Plugin';
+import * as PluginTypes from            '@walletpack/core/dist/plugins/PluginTypes';
+import * as Actions from                '@walletpack/core/dist/models/api/ApiActions';
+import {Blockchains} from               '@walletpack/core/dist/models/Blockchains'
+import Network from                     '@walletpack/core/dist/models/Network'
+import KeyPairService from              '@walletpack/core/dist/services/secure/KeyPairService';
+import Token from                       "@walletpack/core/dist/models/Token";
+import HardwareService from             "@walletpack/core/dist/services/secure/HardwareService";
+import StoreService from                "@walletpack/core/dist/services/utility/StoreService";
+import TokenService from                "@walletpack/core/dist/services/utility/TokenService";
+import EventService from                "@walletpack/core/dist/services/utility/EventService";
+import SigningService from              "@walletpack/core/dist/services/secure/SigningService";
 
 import TronWeb from 'tronweb';
 const ethUtil = require('ethereumjs-util');
 const toBuffer = key => ethUtil.toBuffer(ethUtil.addHexPrefix(key));
+const trc20abi = require('./trc20');
 
 let utils;
 // const utils = tronWeb.utils;
@@ -99,6 +100,16 @@ export default class TRX extends Plugin {
 		if(token.uniqueWithChain() === this.defaultToken().uniqueWithChain()){
 			const bal = await tron.trx.getBalance(account.publicKey);
 			clone.amount = tron.toBigNumber(bal).div(1000000).toFixed(6).toString(10);
+		} else {
+			let balance;
+			try {
+				tron.setAddress(account.publicKey);
+				const contract = await tron.contract(trc20abi).at(token.contract);
+				clone.amount = TokenService.formatAmount(await contract.balanceOf(account.publicKey).call(), token, true);
+			} catch(e){
+				console.error(`${token.name} is not an ERC20 token`, e);
+				clone.amount = parseFloat(0).toFixed(token.decimals);
+			}
 		}
 
 		return clone;
@@ -114,18 +125,27 @@ export default class TRX extends Plugin {
 			tron.trx.getAccount(account.sendable()).catch(() => ({asset:[], balance:0}))
 		]);
 		trx.amount = formatBalance(balance);
-		if(!asset) return [trx];
-		const altTokens = asset.map(({key:symbol, value}) => {
-			return Token.fromJson({
-				blockchain:Blockchains.TRX,
-				contract:'',
-				symbol,
-				name:symbol,
-				decimals:this.defaultDecimals(),
-				amount:formatBalance(value),
-				chainId:account.network().chainId,
+
+
+		let altTokens = [];
+
+		if(asset){
+			altTokens = asset.map(({key:symbol, value}) => {
+				return Token.fromJson({
+					blockchain:Blockchains.TRX,
+					contract:'',
+					symbol,
+					name:symbol,
+					decimals:this.defaultDecimals(),
+					amount:formatBalance(value),
+					chainId:account.network().chainId,
+				})
 			})
-		});
+		}
+
+		for(let i = 0; i < tokens.length; i++){
+			altTokens.push(await this.balanceFor(account, tokens[i]));
+		}
 
 		return [trx].concat(altTokens);
 	}
@@ -137,7 +157,6 @@ export default class TRX extends Plugin {
 
 	async transfer({account, to, amount, token, promptForSignature = true}){
 		amount = TokenService.formatAmount(amount, token);
-		const {symbol} = token;
 		return new Promise(async (resolve, reject) => {
 			const tron = getCachedInstance(account.network());
 
@@ -156,10 +175,16 @@ export default class TRX extends Plugin {
 				unsignedTransaction = await tron.transactionBuilder.sendTrx(to, amount, account.publicKey);
 			}
 
-			// SENDING ALT TOKEN
-			else {
+			// Sending built-in alt token
+			else if (!token.contract || !token.contract.length){
 				tron.setAddress(account.sendable());
-				unsignedTransaction = await tron.transactionBuilder.sendToken(to, amount, symbol);
+				unsignedTransaction = await tron.transactionBuilder.sendToken(to, amount, token.symbol);
+			}
+
+			// Sending TRC20 alt token
+			else {
+				const contract = await tron.contract(trc20abi).at(token.contract);
+				unsignedTransaction = await contract.transfer(to, amount);
 			}
 
 			const signed = await tron.trx.sign(unsignedTransaction)
