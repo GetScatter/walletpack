@@ -1,15 +1,15 @@
-import Plugin from                      '@walletpack/core/dist/plugins/Plugin';
-import * as PluginTypes from            '@walletpack/core/dist/plugins/PluginTypes';
-import * as Actions from                '@walletpack/core/dist/models/api/ApiActions';
-import {Blockchains} from               '@walletpack/core/dist/models/Blockchains'
-import Network from                     '@walletpack/core/dist/models/Network'
-import KeyPairService from              '@walletpack/core/dist/services/secure/KeyPairService';
-import Token from                       "@walletpack/core/dist/models/Token";
-import HardwareService from             "@walletpack/core/dist/services/secure/HardwareService";
-import StoreService from                "@walletpack/core/dist/services/utility/StoreService";
-import TokenService from                "@walletpack/core/dist/services/utility/TokenService";
-import EventService from                "@walletpack/core/dist/services/utility/EventService";
-import SigningService from              "@walletpack/core/dist/services/secure/SigningService";
+import Plugin from                      '@walletpack/core/plugins/Plugin';
+import * as PluginTypes from            '@walletpack/core/plugins/PluginTypes';
+import * as Actions from                '@walletpack/core/models/api/ApiActions';
+import {Blockchains} from               '@walletpack/core/models/Blockchains'
+import Network from                     '@walletpack/core/models/Network'
+import KeyPairService from              '@walletpack/core/services/secure/KeyPairService';
+import Token from                       "@walletpack/core/models/Token";
+import HardwareService from             "@walletpack/core/services/secure/HardwareService";
+import StoreService from                "@walletpack/core/services/utility/StoreService";
+import TokenService from                "@walletpack/core/services/utility/TokenService";
+import EventService from                "@walletpack/core/services/utility/EventService";
+import SigningService from              "@walletpack/core/services/secure/SigningService";
 
 import TronWeb from 'tronweb';
 const ethUtil = require('ethereumjs-util');
