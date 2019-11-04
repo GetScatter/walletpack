@@ -116,7 +116,7 @@ export default class KeyPairService {
         return StoreService.get().dispatch(Actions.SET_SCATTER, scatter);
     }
 
-    static getKeyPairFromPublicKey(publicKey, decrypt = false){
+    static getKeyPairFromPublicKey(publicKey){
         const keypair = StoreService.get().state.scatter.keychain.keypairs.find(x => x.publicKeys.find(k => k.key === publicKey));
         if(keypair) return keypair.clone();
 
@@ -125,7 +125,7 @@ export default class KeyPairService {
         if(identity) {
             return Keypair.fromJson({
                 name:identity.name,
-                publicKeys:[{blockchain:Blockchains.EOSIO, key:publicKey}],
+                publicKeys:[{blockchain:'eos', key:publicKey}],
                 privateKey:identity.privateKey
             });
         }

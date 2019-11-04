@@ -3,6 +3,8 @@ import IdGenerator from '../util/IdGenerator'
 import Network from './Network'
 import StoreService from "../services/utility/StoreService";
 import * as Actions from "../store/constants";
+import PluginRepository from "../plugins/PluginRepository";
+import {Blockchains} from "./Blockchains";
 
 
 
@@ -143,7 +145,7 @@ export default class Identity {
     initialize(hash){
         return new Promise((resolve, reject) => {
             PrivateKey.randomKey().then(privateKey => {
-                this.privateKey = privateKey.toWif();
+                this.privateKey = PluginRepository.plugin(Blockchains.EOSIO).hexPrivateToBuffer(privateKey.toWif());
                 this.publicKey = privateKey.toPublic().toString();
                 this.hash = hash;
                 resolve(true);

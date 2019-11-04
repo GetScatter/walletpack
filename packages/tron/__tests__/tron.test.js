@@ -1,4 +1,3 @@
-// TODO: Something is wrong with tronweb
 'use strict';
 
 import Account from "@walletpack/core/lib/models/Account";
@@ -12,7 +11,8 @@ const tron = new (require('../lib/tron').default)();
 const keypair = Keypair.fromJson({
 	name:'Testing key',
 	// Just a known address with ANTE tokens.
-	publicKeys:[{blockchain:Blockchains.TRX, key:'TFKSq1F1RBhqmLjqktcRk74YpMDGCDQAeX'}],
+	// publicKeys:[{blockchain:Blockchains.TRX, key:'TFKSq1F1RBhqmLjqktcRk74YpMDGCDQAeX'}],
+	publicKeys:[{blockchain:Blockchains.TRX, key:'TF2quv1hTipcZ8FJ8FRsXXLSiJ1C15dqkW'}],
 	privateKey:'...'
 })
 
@@ -52,13 +52,13 @@ describe('tron', () => {
 	    })
     });
 
-    // it('should be able to get trc20 balances', done => {
-    // 	new Promise(async() => {
-	// 		const balances = await tron.balancesFor(account, [token]);
-	// 		console.log('balances', balances);
-    // 		done();
-	//     })
-    // });
+    it('should be able to get trc20 balances', done => {
+    	new Promise(async() => {
+			const balances = await tron.balancesFor(account, [token]);
+			console.log('balances', balances);
+    		done();
+	    })
+    });
 
     // it('should be able to parse trc20 transactions', done => {
     // 	new Promise(async() => {

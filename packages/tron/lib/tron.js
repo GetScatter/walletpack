@@ -120,28 +120,45 @@ export default class TRX extends Plugin {
 		const formatBalance = n => tron.toBigNumber(n).div(1000000).toFixed(6).toString(10);
 
 		const trx = this.defaultToken();
-		const {asset, balance} = await Promise.race([
+		const {asset, balance, assetV2} = await Promise.race([
 			new Promise(resolve => setTimeout(() => resolve({asset:[], balance:0}), 2000)),
 			tron.trx.getAccount(account.sendable()).catch(() => ({asset:[], balance:0}))
 		]);
 		trx.amount = formatBalance(balance);
 
-
 		let altTokens = [];
 
-		if(asset){
-			altTokens = asset.map(({key:symbol, value}) => {
-				return Token.fromJson({
+		if(assetV2){
+			await Promise.all(assetV2.map(async ({key, value}) => {
+				const token = await tron.trx.getTokenByID(key);
+				altTokens.push(Token.fromJson({
+					key,
 					blockchain:Blockchains.TRX,
 					contract:'',
-					symbol,
-					name:symbol,
+					symbol:token.abbr,
+					name:token.name,
 					decimals:this.defaultDecimals(),
 					amount:formatBalance(value),
 					chainId:account.network().chainId,
-				})
-			})
+				}));
+				return true;
+			}));
 		}
+
+		// This doesn't work with sendToken now!
+		// if(asset){
+		// 	altTokens = asset.map(({key:symbol, value}) => {
+		// 		return Token.fromJson({
+		// 			blockchain:Blockchains.TRX,
+		// 			contract:'',
+		// 			symbol,
+		// 			name:symbol,
+		// 			decimals:this.defaultDecimals(),
+		// 			amount:formatBalance(value),
+		// 			chainId:account.network().chainId,
+		// 		})
+		// 	})
+		// }
 
 		for(let i = 0; i < tokens.length; i++){
 			altTokens.push(await this.balanceFor(account, tokens[i]));
@@ -177,22 +194,30 @@ export default class TRX extends Plugin {
 
 			// SENDING TRX
 			if(isTRX) {
-				unsignedTransaction = await tron.transactionBuilder.sendTrx(to, amount, account.publicKey);
+				unsignedTransaction = await tron.transactionBuilder.sendTrx(to, amount, account.publicKey).catch(error => {
+					return resolve({error});
+				});
 			}
 
 			// Sending built-in alt token
 			else if (isTRC10){
 				tron.setAddress(account.sendable());
-				unsignedTransaction = await tron.transactionBuilder.sendToken(to, amount, token.symbol);
+				unsignedTransaction = await tron.transactionBuilder.sendToken(to, amount, token.key ? token.key : token.symbol).catch(error => {
+					return resolve({error});
+				});
 			}
 
 			// Sending TRC20 alt token
 			else if (isTRC20) {
-				abi = trc20abi;
-				const contract = await tron.contract(abi).at(token.contract);
+				abi = {
+					abi:trc20abi,
+					method:'transfer',
+					token,
+				};
+				const contract = await tron.contract(trc20abi).at(token.contract);
 				const {inputs, functionSelector, defaultOptions} = contract.methodInstances.transfer;
 				defaultOptions.from = account.publicKey;
-				unsignedTransaction = (await tron.transactionBuilder.triggerSmartContract(
+				const txData = await tron.transactionBuilder.triggerSmartContract(
 					token.contract,
 					functionSelector,
 					defaultOptions,
@@ -203,7 +228,12 @@ export default class TRX extends Plugin {
 						}
 					}),
 					tron.address.toHex(account.publicKey)
-				)).transaction;
+				).catch(err => {
+					console.error(err);
+					return null;
+				});
+				if(!txData) return resolve(null);
+				unsignedTransaction = txData.transaction;
 			}
 
 			else {
@@ -211,13 +241,18 @@ export default class TRX extends Plugin {
 				return resolve(null);
 			}
 
+			if(!unsignedTransaction) return;
+
 			const signed = await tron.trx.sign(unsignedTransaction)
 				.then(x => ({success: true, result: x}))
 				.catch(error => ({success: false, result: error}));
 
 			if (!signed.success) return resolve({error: signed.result});
 			else {
-				const sent = await tron.trx.sendRawTransaction(signed.result).then(x => x.result);
+				const sent = await tron.trx.sendRawTransaction(signed.result).then(x => x.result).catch(err => {
+					console.error(err);
+					return null;
+				});
 				resolve(sent ? signed.result : {error: 'Failed to send.'});
 			}
 		})
@@ -265,6 +300,8 @@ export default class TRX extends Plugin {
 	}
 
 	async requestParser(transaction, abiData){
+		if(!abiData && transaction.abi) abiData = transaction.abi;
+
 		const network = Network.fromJson(transaction.network);
 		const txID = transaction.transaction.transaction.txID;
 		transaction = transaction.transaction.transaction.raw_data;
@@ -274,13 +311,12 @@ export default class TRX extends Plugin {
 
 			let data = contract.parameter.value;
 			const address = data.hasOwnProperty('contract_address') ? data.contract_address : 'system';
-
 			const quantity = data.hasOwnProperty('call_value') ? {paying:tron.fromSun(data.call_value) + ' TRX'} : {};
 
 			let params = {};
 			let methodABI;
 			if(abiData){
-				const {abi, address, method} = abiData;
+				const {abi, method, token} = abiData;
 				methodABI = abi.find(x => x.name === method);
 				if(!methodABI) throw Error.signatureError('no_abi_method', "No method signature on the abi you provided matched the data for this transaction");
 				const names = methodABI.inputs.map(x => x.name);
@@ -289,7 +325,13 @@ export default class TRX extends Plugin {
 				data = tron.utils.abi.decodeParams(names, types, data.data, true);
 				data = Object.assign(data, quantity);
 
+				if(token){
+					data.token = token.symbol;
+					data.value = TokenService.formatAmount(tron.toBigNumber(data.value).toString(), token, true);
+				}
+
 				Object.keys(data).map(key => {
+					if(typeof data[key] === 'object' && data[key]._ethersType === 'BigNumber') data[key] = tron.toBigNumber(data[key]);
 					if(tron.utils.isBigNumber(data[key])) data[key] = data[key].toString();
 				});
 			}
