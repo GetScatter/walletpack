@@ -394,11 +394,33 @@ export default class ApiService {
 		});
 	}
 
+	static async [Actions.GET_ENCRYPTION_KEY](request){
+        return new Promise(async resolve => {
 
+            const {fromPublicKey, toPublicKey, nonce} = request.payload;
 
+            let keypair = KeyPairService.getKeyPairFromPublicKey(fromPublicKey);
+			if(!keypair) return resolve({id:request.id, result:Error.signatureError("no_from_key", "This user does not have the FROM key")});
 
-
-
+			const getEncryptionKey = () => {
+				const toPublicKeyBuffer = Buffer.from(toPublicKey, 'hex');
+            	const encryptionKey = Crypto.getEncryptionKey(keypair.privateKey, toPublicKeyBuffer, nonce);
+            	resolve({id:request.id, result:{encryptionKey, nonce}});
+			}
+			
+			if(!nonce) {
+				nonce = Crypto.uniqueNonce();
+				return getEncryptionKey();
+			} else {
+				// ... popup prompt for dapp authorization on using nonce to get encryption key to decrypt
+				EventService.emit('popout', Object.assign(request, {})).then( async ({result}) => {
+					if(!result) return resolve({id:request.id, result:Error.signatureError("get_encryption_key_rejected", "User rejected to get encryption key")});
+					getEncryptionKey();
+				});
+			}
+        });
+	}
+	
 
 
 
