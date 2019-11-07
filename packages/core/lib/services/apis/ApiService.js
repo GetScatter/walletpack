@@ -162,7 +162,7 @@ export default class ApiService {
 			// CHECKING FOR BLACKLISTED ACTIONS
 			const blacklisted = payload.messages.map(x => `${blockchain}::${x.code}::${x.type}`).filter(actionTag => StoreService.get().state.scatter.settings.isActionBlacklisted(actionTag));
 			if(blacklisted.length){
-				EventService.emit('firewalled', {actions:parsed, payload});
+				EventService.emit('firewalled', {actions:blacklisted, payload});
 				return resolve({id:request.id, result:Error.malicious('firewalled')});
 			}
 

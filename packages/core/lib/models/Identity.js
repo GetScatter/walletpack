@@ -145,7 +145,7 @@ export default class Identity {
     initialize(hash){
         return new Promise((resolve, reject) => {
             PrivateKey.randomKey().then(privateKey => {
-                this.privateKey = PluginRepository.plugin(Blockchains.EOSIO).hexPrivateToBuffer(privateKey.toWif());
+                this.privateKey = PrivateKey(privateKey.toWif()).toBuffer();
                 this.publicKey = privateKey.toPublic().toString();
                 this.hash = hash;
                 resolve(true);
