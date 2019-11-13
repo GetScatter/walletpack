@@ -169,7 +169,7 @@ const EXPLORER = {
 };
 
 
-
+let getABIsFromBackend = false;
 export default class EOS extends Plugin {
 
 	constructor(){ super(Blockchains.EOSIO, PluginTypes.BLOCKCHAIN_SUPPORT) }
@@ -859,9 +859,13 @@ export default class EOS extends Plugin {
 			}));
 	}
 
+	setGetABIsFromBackend(bool){
+		getABIsFromBackend = bool;
+	}
+
 	async fetchAbis(network, contracts, fallbackToChain = false){
 
-		if(!fallbackToChain){
+		if(!getABIsFromBackend && !fallbackToChain){
 			const abis = await Promise.race([
 				POST(`walletpack/abis`, {network, accounts:contracts}).catch(() => null),
 				new Promise(r => setTimeout(() => r(null), 2000)),
