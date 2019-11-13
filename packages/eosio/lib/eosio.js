@@ -865,7 +865,7 @@ export default class EOS extends Plugin {
 
 	async fetchAbis(network, contracts, fallbackToChain = false){
 
-		if(!getABIsFromBackend && !fallbackToChain){
+		if(getABIsFromBackend && !fallbackToChain){
 			const abis = await Promise.race([
 				POST(`walletpack/abis`, {network, accounts:contracts}).catch(() => null),
 				new Promise(r => setTimeout(() => r(null), 2000)),
