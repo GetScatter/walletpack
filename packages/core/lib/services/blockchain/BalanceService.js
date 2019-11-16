@@ -54,7 +54,7 @@ export default class BalanceService {
 		return plugin.hasUntouchableTokens() ? plugin.untouchableBalance(account) : [];
 	}
 
-	static totalBalances(allNetworks = false){
+	static totalBalances(){
 		const tokens = {};
 		tokens['totals'] = {};
 
@@ -63,11 +63,6 @@ export default class BalanceService {
 		Object.keys(balances).map(async accountUnique => {
 			const account = StoreService.get().state.scatter.keychain.accounts.find(x => x.identifiable() === accountUnique);
 			if(!account) return;
-
-			if(!allNetworks && StoreService.get().state.scatter.settings.showMainnetsOnly){
-				if(!PluginRepository.plugin(account.blockchain()).isEndorsedNetwork(account.network()))
-					return;
-			}
 
 			if(!tokens.hasOwnProperty(account.networkUnique)){
 				tokens[account.networkUnique] = {};

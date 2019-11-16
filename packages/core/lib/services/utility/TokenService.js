@@ -50,7 +50,7 @@ export default class TokenService {
     static hasToken(token){
     	const scatter = StoreService.get().state.scatter.clone();
 
-    	return !!BalanceService.totalBalances(true).totals[token.unique()] ||
+    	return !!BalanceService.totalBalances().totals[token.unique()] ||
 		    !!scatter.settings.tokens.find(x => x.unique() === token.unique()) ||
 		    !!scatter.settings.blacklistTokens.find(x => x.unique() === token.unique());
     }

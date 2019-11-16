@@ -108,8 +108,8 @@ export default class Token {
 	}
 
 	totalBalance(){
-		if(BalanceService.totalBalances(false).totals.hasOwnProperty(this.uniqueWithChain())){
-			return BalanceService.totalBalances(false).totals[this.uniqueWithChain()];
+		if(BalanceService.totalBalances().totals.hasOwnProperty(this.uniqueWithChain())){
+			return BalanceService.totalBalances().totals[this.uniqueWithChain()];
 		} else {
 			return null;
 		}
