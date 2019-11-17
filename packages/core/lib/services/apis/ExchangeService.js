@@ -28,8 +28,8 @@ export default class ExchangeService {
 		return timeout(POST('exchange/rate', {token, other, service}));
 	}
 
-	static async order(service, token, other, amount, from, to){
-		return timeout(POST('exchange/order', {service, token, other, amount, from, to}));
+	static async order(service, token, other, amount, from, to, returnsErrors = true){
+		return timeout(POST('exchange/order', {service, token, other, amount, from, to, returnsErrors}));
 	}
 
 	static async accepted(id){
