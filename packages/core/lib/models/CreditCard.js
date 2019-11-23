@@ -3,6 +3,24 @@ import IdGenerator from '../util/IdGenerator';
 import Crypto from '../util/Crypto';
 import Keychain from "./Keychain";
 
+export class CreditCardPersonalInformation {
+	constructor() {
+		this.name = '';
+		this.email = '';
+		this.birthdate = '';
+		this.address = '';
+		this.city = '';
+		this.state = '';
+		this.country = '';
+		this.zipcode = '';
+	}
+
+	static placeholder(){ return new CreditCardPersonalInformation(); }
+	static fromJson(json){ return Object.assign(this.placeholder(), json); }
+	clone(){ return CreditCardPersonalInformation.fromJson(JSON.parse(JSON.stringify(this))) }
+
+}
+
 export class CreditCardSecureProperties {
 
     constructor(){
@@ -11,11 +29,16 @@ export class CreditCardSecureProperties {
 	    this.expiration = '';
 	    this.cardHash = '';
 
-        this.personalInformation = {};
+        this.personalInformation = CreditCardPersonalInformation.placeholder();
     }
 
 	static placeholder(){ return new CreditCardSecureProperties(); }
-	static fromJson(json){ return Object.assign(this.placeholder(), json); }
+	static fromJson(json){
+		let p = Object.assign(this.placeholder(), json);
+		if(json.hasOwnProperty('personalInformation'))
+			p.personalInformation = CreditCardPersonalInformation.fromJson(json.personalInformation);
+		return p;
+	}
 	clone(){ return CreditCardSecureProperties.fromJson(JSON.parse(JSON.stringify(this))) }
 
 }
