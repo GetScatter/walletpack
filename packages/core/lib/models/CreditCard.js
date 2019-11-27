@@ -26,7 +26,6 @@ export class CreditCardSecureProperties {
     constructor(){
         this.number = '';
         this.authTokens = {};
-	    this.expiration = '';
 	    this.cardHash = '';
 
         this.personalInformation = CreditCardPersonalInformation.placeholder();
@@ -49,6 +48,7 @@ export default class CreditCard {
         this.id = IdGenerator.text(24);
         this.name = '';
 	    this.lastFour = '';
+	    this.expiration = '';
         this.secure = CreditCardSecureProperties.placeholder();
         this.createdAt = +new Date();
     }
