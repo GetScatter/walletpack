@@ -19,6 +19,8 @@ import ecc from 'eosjs-ecc';
 import { Api, JsonRpc } from 'eosjs';
 import * as numeric from "eosjs/dist/eosjs-numeric";
 
+import LightAPI from './api';
+
 export const TextEncoder = require('util') ? require('util').TextEncoder : require('text-encoding') ? require('text-encoding').TextEncoder : global.TextEncoder;
 export const TextDecoder = require('util') ? require('util').TextDecoder : require('text-encoding') ? require('text-encoding').TextDecoder : global.TextDecoder;
 export const encoderOptions = TextEncoder ? {textEncoder:new TextEncoder(), textDecoder:new TextDecoder()} : {};
@@ -32,8 +34,6 @@ const getEosjsApi = rpc => {
 
 export const eosjsUtil = getEosjsApi();
 
-
-const ACCOUNT_AND_TOKEN_API_URL = 'https://api.light.xeos.me/api';
 const MAINNET_CHAIN_ID = 'aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906';
 
 
@@ -50,67 +50,9 @@ const getHistoryData = (network, route, params) => fetch(`${network.fullhost()}/
 
 
 
-
-
-
-
-
-
-
-
-class EosTokenAccountAPI {
-	constructor(){}
-
-	static async getAccountsFromPublicKey(publicKey){
-		return await Promise.race([
-			new Promise(resolve => setTimeout(() => resolve(null), 5000)),
-			fetch(`${ACCOUNT_AND_TOKEN_API_URL}/key/${publicKey}`).then(r => r.json()).then(res => {
-				if(!res.eos) return null;
-				const rawAccounts = res.eos.accounts;
-				let accounts = [];
-				Object.keys(rawAccounts).map(name => {
-					rawAccounts[name]
-						.filter(acc => {
-							return acc.auth.keys.some(({pubkey}) => pubkey === publicKey);
-						})
-						.map(acc => {
-							accounts.push({name, authority: acc.perm})
-						})
-				});
-				return accounts;
-			}).catch(err => {
-				console.error('err', err);
-				return null;
-			})
-		])
-	}
-
-	static async getAllTokens(account){
-		return await Promise.race([
-			new Promise(resolve => setTimeout(() => resolve(null), 5000)),
-			fetch(`${ACCOUNT_AND_TOKEN_API_URL}/account/eos/${account.sendable()}`).then(r => r.json()).then(res => {
-				return res.balances.map(balance => {
-					return Token.fromJson({
-						blockchain:Blockchains.EOSIO,
-						contract:balance.contract,
-						symbol:balance.currency,
-						name:balance.currency,
-						amount:balance.amount,
-						decimals:balance.decimals,
-						chainId:account.network().chainId
-					})
-				});
-			}).catch(err => {
-				return null;
-			})
-		])
-	}
-}
-
-
 const getAccountsFromPublicKey = async (publicKey, network, fallbackToChain = false) => {
-	if(network.chainId === MAINNET_CHAIN_ID && !fallbackToChain){
-		const accountsFromApi = await EosTokenAccountAPI.getAccountsFromPublicKey(publicKey);
+	if(!fallbackToChain && await LightAPI.hasNetwork(network)){
+		const accountsFromApi = await LightAPI.getAccountsFromPublicKey(publicKey, network);
 		if(!accountsFromApi) return getAccountsFromPublicKey(publicKey, network, true);
 		else return accountsFromApi;
 	}
@@ -123,8 +65,7 @@ const getAccountsFromPublicKey = async (publicKey, network, fallbackToChain = fa
 				const {account_names} = res;
 
 				Promise.all(account_names.map(async name => {
-					const data = await getChainData(network, 'get_account', {account_name:name}).catch(e => resolve([]))
-					return data;
+					return await getChainData(network, 'get_account', {account_name:name}).catch(e => resolve([]));
 				})).then(multires => {
 					let accounts = [];
 					multires.map(account => {
@@ -143,14 +84,11 @@ const getAccountsFromPublicKey = async (publicKey, network, fallbackToChain = fa
 
 
 
-const popupError = (result) => {
+const parseErrorMessage = (result) => {
 
 	let error;
-	try {
-		error = JSON.parse(error).error.details[0].message
-	} catch(e){
-		error = result;
-	}
+	try { error = JSON.parse(error).error.details[0].message }
+	catch(e){ error = result; }
 
 	if(error && error.toString().indexOf('assertion failure with message') > -1){
 		error = error.toString().replace('assertion failure with message:', '').trim()
@@ -263,7 +201,7 @@ export default class EOS extends Plugin {
 					resolve(trx.transaction_id)
 				})
 				.catch(res => {
-					reject({error:popupError(res)});
+					reject({error:parseErrorMessage(res)});
 				})
 
 
@@ -326,7 +264,7 @@ export default class EOS extends Plugin {
 				expireSeconds: 30,
 			})
 				.catch(res => {
-					reject({error:popupError(res)})
+					reject({error:parseErrorMessage(res)})
 				})
 				.then(async res => {
 
@@ -390,7 +328,7 @@ export default class EOS extends Plugin {
 					resolve(trx)
 				})
 				.catch(res => {
-					reject({error:popupError(res)});
+					reject({error:parseErrorMessage(res)});
 				})
 		})
 	}
@@ -572,8 +510,8 @@ export default class EOS extends Plugin {
 	}
 
 	async balancesFor(account, tokens, fallback = false){
-		if(!fallback && this.isEndorsedNetwork(account.network())){
-			const balances = await EosTokenAccountAPI.getAllTokens(account);
+		if(!fallback && await LightAPI.hasNetwork(account.network())){
+			const balances = await LightAPI.balancesFor(account, account.network());
 			if(!balances) return this.balanceFor(account, tokens, true);
 			const blacklist = StoreService.get().state.scatter.settings.blacklistTokens.filter(x => x.blockchain === Blockchains.EOSIO).map(x => x.unique());
 			return balances.filter(x => !blacklist.includes(x.unique()));
@@ -676,7 +614,7 @@ export default class EOS extends Plugin {
 			})
 				.then(trx => resolve(trx.transaction_id))
 				.catch(res => {
-					reject({error:popupError(res)});
+					reject({error:parseErrorMessage(res)});
 				})
 		})
 	}
@@ -716,7 +654,7 @@ export default class EOS extends Plugin {
 			})
 				.then(trx => resolve(trx.transaction_id))
 				.catch(res => {
-					reject({error:popupError(res)});
+					reject({error:parseErrorMessage(res)});
 				})
 		})
 	}
@@ -752,7 +690,7 @@ export default class EOS extends Plugin {
 			})
 				.then(trx => resolve(trx.transaction_id))
 				.catch(res => {
-					reject({error:popupError(res)});
+					reject({error:parseErrorMessage(res)});
 				})
 		})
 	}
@@ -786,7 +724,7 @@ export default class EOS extends Plugin {
 				blocksBehind: 3,
 				expireSeconds: 30,
 			})
-				.catch(res => resolve({error:popupError(res)}))
+				.catch(res => resolve({error:parseErrorMessage(res)}))
 				.then(result => resolve(result))
 		})
 	}

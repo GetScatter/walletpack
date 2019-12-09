@@ -13,7 +13,10 @@ export default class BalanceService {
 			const tokens = StoreService.get().state.scatter.allTokens().filter(x => x.blockchain === blockchain)
 				.filter(x => x.chainId === account.network().chainId);
 			const balances = await plugin.balancesFor(account, tokens);
-			(await this.loadUntouchables(account)).map(x => balances.push(x));
+
+			// We are now considering this "locked up balances", which should be fetched individually on-demand
+			// (await this.loadUntouchables(account)).map(x => balances.push(x));
+
 			return StoreService.get().dispatch(Actions.SET_BALANCES, {account:account.identifiable(), balances});
 		} catch(e){
 			return null;
