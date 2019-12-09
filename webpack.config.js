@@ -1,6 +1,5 @@
 const path = require('path');
 const webpack = require('webpack')
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const fs = require('fs');
 
 const getPackagePath = x => `./packages/${x}/src/index.js`;
@@ -38,7 +37,7 @@ module.exports = {
 		],
 	},
 	plugins: [
-		// new UglifyJsPlugin()
+
 	],
 	stats: { colors: true },
 	// devtool: false,
