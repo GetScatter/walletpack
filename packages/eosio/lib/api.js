@@ -28,12 +28,6 @@ export default class LightAPI {
 		return networks;
 	}
 
-	static async hasNetwork(network){
-		const networks = await this.getNetworks();
-		if(!networks) return null;
-		return networks[network.chainId];
-	}
-
 	static async networkString(network){
 		const networks = await this.getNetworks();
 		if(!networks) return null;

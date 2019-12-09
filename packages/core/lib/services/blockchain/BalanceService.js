@@ -40,7 +40,7 @@ export default class BalanceService {
 			await Promise.race([
 				new Promise(resolve => setTimeout(() => resolve(), 20000)),
 				this.loadBalancesFor(accounts[i])
-			])
+			]);
 		}
 
 		return true;

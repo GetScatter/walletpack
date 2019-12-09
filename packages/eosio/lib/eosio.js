@@ -51,7 +51,7 @@ const getHistoryData = (network, route, params) => fetch(`${network.fullhost()}/
 
 
 const getAccountsFromPublicKey = async (publicKey, network, fallbackToChain = false) => {
-	if(!fallbackToChain && await LightAPI.hasNetwork(network)){
+	if(!fallbackToChain && await LightAPI.networkString(network)){
 		const accountsFromApi = await LightAPI.getAccountsFromPublicKey(publicKey, network);
 		if(!accountsFromApi) return getAccountsFromPublicKey(publicKey, network, true);
 		else return accountsFromApi;
@@ -510,7 +510,7 @@ export default class EOS extends Plugin {
 	}
 
 	async balancesFor(account, tokens, fallback = false){
-		if(!fallback && await LightAPI.hasNetwork(account.network())){
+		if(!fallback && await LightAPI.networkString(account.network())){
 			const balances = await LightAPI.balancesFor(account, account.network());
 			if(!balances) return this.balanceFor(account, tokens, true);
 			const blacklist = StoreService.get().state.scatter.settings.blacklistTokens.filter(x => x.blockchain === Blockchains.EOSIO).map(x => x.unique());
