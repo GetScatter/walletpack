@@ -577,7 +577,13 @@ export default class ApiService {
             if(exists) return resolve({id:request.id, result:new Error("token_exists", "The user already has this token in their Scatter.")});
 
             await TokenService.addToken(token);
-            BalanceService.loadAllBalances(true);
+
+            const accounts = StoreService.get().state.scatter.keychain.accounts.filter(account => account.network().unique() === network.unique());
+	        if(accounts.length){
+		        for(let i = 0; i < accounts.length; i++){
+			        await BalanceService.loadBalancesFor(accounts[i]);
+		        }
+	        }
 
             resolve({id:request.id, result:true});
         })

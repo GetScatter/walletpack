@@ -74,7 +74,7 @@ export default class AccountService {
 	        scatter = StoreService.get().state.scatter.clone();
             accounts.map(account => scatter.keychain.addAccount(account));
             await StoreService.get().dispatch(Actions.SET_SCATTER, scatter);
-            resolve(true);
+            resolve(accounts);
         })
     }
 

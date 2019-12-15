@@ -6,7 +6,7 @@ let lastBalanceTime;
 
 export default class BalanceService {
 
-	static async loadBalancesFor(account){
+	static async loadBalancesFor(account, returnOnly = false){
 		try {
 			const blockchain = account.blockchain();
 			const plugin = PluginRepository.plugin(blockchain);
@@ -17,13 +17,14 @@ export default class BalanceService {
 			// We are now considering this "locked up balances", which should be fetched individually on-demand
 			// (await this.loadUntouchables(account)).map(x => balances.push(x));
 
+			if(returnOnly) return {account:account.identifiable(), balances};
 			return StoreService.get().dispatch(Actions.SET_BALANCES, {account:account.identifiable(), balances});
 		} catch(e){
 			return null;
 		}
 	}
 
-	static async loadAllBalances(force = false){
+	static async loadAllBalances(force = false, returnOnly = false){
 		if(!force && lastBalanceTime < (+new Date()+1000*60*5)) return;
 		lastBalanceTime = +new Date();
 		const accounts = StoreService.get().state.scatter.keychain.accounts.reduce((acc, account) => {
@@ -36,12 +37,15 @@ export default class BalanceService {
 			return isMainnet ? -1 : 1;
 		});
 
+		let results = [];
 		for(let i = 0; i < accounts.length; i++){
 			await Promise.race([
 				new Promise(resolve => setTimeout(() => resolve(), 20000)),
-				this.loadBalancesFor(accounts[i])
+				this.loadBalancesFor(accounts[i]).then(x => results.push(x))
 			]);
 		}
+
+		if(returnOnly) return results;
 
 		return true;
 	}

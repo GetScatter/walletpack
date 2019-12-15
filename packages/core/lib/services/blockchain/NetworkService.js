@@ -13,7 +13,7 @@ export default class NetworkService {
         const scatter = StoreService.get().state.scatter.clone();
         const networks = scatter.settings.networks;
         if(networks.find(x => x.id === network.id)) return;
-        
+
         if(!network.name.length) return {error:"Missing Name"};
         if(!network.host.length) return {error:"Missing Host"};
         if(!network.port)        return {error:"Missing Port"};
@@ -29,10 +29,12 @@ export default class NetworkService {
 
         scatter.settings.updateOrPushNetwork(network);
         await StoreService.get().dispatch(Actions.SET_SCATTER, scatter);
-        await AccountService.importAllAccountsForNetwork(network);
-        setTimeout(() => {
-	        BalanceService.loadAllBalances(true);
-        }, 100);
+        const accounts = await AccountService.importAllAccountsForNetwork(network);
+	    if(accounts.length){
+		    for(let i = 0; i < accounts.length; i++){
+			    await BalanceService.loadBalancesFor(accounts[i]);
+		    }
+	    }
 	    PluginRepository.bustCaches();
         return true;
     }
