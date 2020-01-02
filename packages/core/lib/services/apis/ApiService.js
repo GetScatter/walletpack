@@ -39,7 +39,11 @@ export default class ApiService {
 
         if(blocked.includes(request.type)) return {id:request.id, result:Error.malicious('This wallet has turned this API route off.')};
 
-        return await this[request.type](request);
+        const result = await this[request.type](request);
+        // Adding something to be able to catch API routes in integration
+        EventService.emit('api_response', { type:result.type, result });
+        return result;
+        // return await this[request.type](request);
     }
 
 
