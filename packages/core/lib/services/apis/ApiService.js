@@ -41,7 +41,7 @@ export default class ApiService {
 
         const result = await this[request.type](request);
         // Adding something to be able to catch API routes in integration
-        EventService.emit('api_response', { type:request.type, result });
+        EventService.emit('api_response', { request, result });
         return result;
         // return await this[request.type](request);
     }
