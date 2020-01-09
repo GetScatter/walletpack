@@ -62,8 +62,9 @@ export default class Token {
 
     network(){
     	const networks = StoreService.get().state.scatter.settings.networks;
-    	if(!this.chainId || !this.chainId.length) return networks.find(x => x.unique() === PluginRepository.plugin(this.blockchain).getEndorsedNetwork().unique());
-    	return networks.find(x => x.blockchain === this.blockchain && x.chainId === this.chainId);
+    	const endorsed = networks.find(x => x.unique() === PluginRepository.plugin(this.blockchain).getEndorsedNetwork().unique());
+    	if(!this.chainId || !this.chainId.length) return endorsed;
+    	return networks.find(x => x.blockchain === this.blockchain && x.chainId === this.chainId) || endorsed;
     }
 
     formatted(){
