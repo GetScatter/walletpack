@@ -259,7 +259,7 @@ export default class ETH extends Plugin {
 		})
 	}
 
-	async requestParser(transaction, abi, token = null){
+	async requestParser(transaction, network, abi, token = null){
 		let params = {};
 		let methodABI;
 

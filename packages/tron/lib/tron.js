@@ -299,10 +299,10 @@ export default class TRX extends Plugin {
 		})
 	}
 
-	async requestParser(transaction, abiData){
+	async requestParser(transaction, network, abiData){
 		if(!abiData && transaction.abi) abiData = transaction.abi;
 
-		const network = Network.fromJson(transaction.network);
+		network = Network.fromJson(transaction.network);
 		const txID = transaction.transaction.transaction.txID;
 		transaction = transaction.transaction.transaction.raw_data;
 

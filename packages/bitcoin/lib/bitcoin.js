@@ -236,7 +236,7 @@ export default class BTC extends Plugin {
 		})
 	}
 
-	async requestParser(transaction){
+	async requestParser(transaction, network){
 		throw new Error("Bitcoin not yet supported externally")
 	}
 }
