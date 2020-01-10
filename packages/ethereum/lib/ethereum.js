@@ -300,6 +300,8 @@ export default class ETH extends Plugin {
 		if(transaction.hasOwnProperty('value') && transaction.value > 0)
 			data.value = web3util.utils.fromWei(h2n(transaction.value)) + ' ETH';
 
+		if(transaction.to && transaction.to.length)
+			data.to = transaction.to;
 
 		return [{
 			data,
