@@ -17,6 +17,11 @@ export default class PluginInterface extends Plugin {
 	bip(){}
 
 	/***
+	 * If there is an internal cache, this method being called should clear it.
+	 */
+	bustCache(){}
+
+	/***
 	 * Explorer is an object that points to a web-interface block explorer.
 	 * {x} is used as a placeholder for an account/txid/block_id.
 	 * EXAMPLE:
