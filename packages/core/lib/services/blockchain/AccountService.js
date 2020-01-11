@@ -22,6 +22,27 @@ export default class AccountService {
         return BalanceService.removeStaleBalances();
     }
 
+    static async getAccountsFor(keypair, network){
+        const publicKey = keypair.publicKeys.find(x => x.blockchain === network.blockchain).key;
+        if(!publicKey) return null;
+
+        let accounts = [];
+
+	    const plugin = PluginRepository.plugin(network.blockchain);
+
+	    if(!plugin.accountsAreImported()) accounts.push(Account.fromJson({
+            keypairUnique:keypair.unique(),
+            networkUnique:network.unique(),
+            publicKey
+        }));
+
+	    else {
+	        await AccountService.accountsFrom(plugin, [network], accounts, keypair);
+	    }
+
+	    return accounts;
+    }
+
     static async importAllAccounts(keypair, isNewKeypair = false, blockchains = null, networks = null, addOnly = false){
         return new Promise(async resolve => {
             let scatter = StoreService.get().state.scatter.clone();
