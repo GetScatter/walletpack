@@ -123,11 +123,11 @@ export default class EOS extends Plugin {
 		}
 	}
 
-	getSignableEosjs(accounts, reject, prompt = true){
+	getSignableEosjs(accounts, reject, prompt = true, signatureProvider = null){
 		const isSingleAccount = accounts instanceof Account;
 		const rpc = new JsonRpc((isSingleAccount ? accounts.network() : accounts[0].network()).fullhost());
-		let params = {rpc, signatureProvider:this.signatureProvider(accounts, reject)};
-		if(TextEncoder) params = Object.assign(rpc, {textEncoder:new TextEncoder(), textDecoder:new TextDecoder()})
+		let params = {rpc, signatureProvider:signatureProvider ? signatureProvider : this.signatureProvider(accounts, reject)};
+		if(TextEncoder) params = Object.assign(rpc, {textEncoder:new TextEncoder(), textDecoder:new TextDecoder()});
 		return new Api(params);
 	}
 

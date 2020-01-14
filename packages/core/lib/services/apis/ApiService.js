@@ -543,7 +543,7 @@ export default class ApiService {
             const scatter = StoreService.get().state.scatter.clone();
             scatter.settings.networks.push(network);
             await StoreService.get().dispatch(StoreActions.SET_SCATTER, scatter);
-            await AccountService.importAllAccountsForNetwork(network);
+            // await AccountService.importAllAccountsForNetwork(network);
 
             resolve({id:request.id, result:true});
         })
