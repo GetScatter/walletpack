@@ -1,0 +1,53 @@
+Arguments: 
+  C:\Program Files\nodejs\node.exe C:\Program Files (x86)\Yarn\bin\yarn.js add @fioprotocol/fiojs
+
+PATH: 
+  C:\Python27\;C:\Python27\Scripts;C:\Program Files (x86)\Common Files\Intel\Shared Libraries\redist\intel64\compiler;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\Program Files\Git\cmd;C:\WINDOWS\System32\OpenSSH\;C:\Program Files (x86)\Yarn\bin\;C:\Users\nsjames\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\Program Files\nodejs\;C:\ProgramData\chocolatey\bin;C:\Program Files\Java\jdk1.8.0_221\bin;C:\Program Files\SafeNet\Authentication\SAC\x64;C:\Program Files\SafeNet\Authentication\SAC\x32;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Users\nsjames\.windows-build-tools\python27\;C:\Program Files\nodejs\node_modules\npm\bin\node-gyp-bin;C:\Users\nsjames\AppData\Roaming\npm\node_modules\windows-build-tools\node_modules\.bin;C:\Users\nsjames\AppData\Roaming\npm\node_modules\.bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files\Git\cmd;C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\bin;C:\Program Files\nodejs\;C:\Program Files (x86)\Yarn\bin\;C:\Users\nsjames\AppData\Local\Microsoft\WindowsApps;C:\Users\nsjames\AppData\Local\Microsoft\WindowsApps;C:\Users\nsjames\AppData\Local\Yarn\bin;C:\Users\nsjames\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\Users\nsjames\AppData\Roaming\npm;C:\kubernetes;;C:\Program Files\Docker Toolbox
+
+Yarn version: 
+  1.12.3
+
+Node version: 
+  10.15.3
+
+Platform: 
+  win32 x64
+
+Trace: 
+  SyntaxError: C:\Work\Libraries\walletpack\packages\fio\package.json: Unexpected token } in JSON at position 405
+      at JSON.parse (<anonymous>)
+      at C:\Program Files (x86)\Yarn\lib\cli.js:1631:59
+      at Generator.next (<anonymous>)
+      at step (C:\Program Files (x86)\Yarn\lib\cli.js:304:30)
+      at C:\Program Files (x86)\Yarn\lib\cli.js:315:13
+
+npm manifest: 
+  {
+    "name": "@walletpack/fio",
+    "version": "0.0.1",
+    "description": "> TODO: description",
+    "author": "GetScatter Ltd. 2019",
+    "homepage": "",
+    "license": "ISC",
+    "main": "fio.js",
+    "files": [
+      "dist",
+      "prepare.js"
+    ],
+    "scripts": {
+      "install": "node prepare.js",
+      "test": "echo \"Error: run tests from root\" && exit 1"
+    },
+    "dependencies": {
+      "@walletpack/core": "^1.0.41",
+    },
+    "publishConfig": {
+      "access": "public"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

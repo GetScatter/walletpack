@@ -27,7 +27,7 @@ describe('eosio', () => {
 
     it('should be able to fetch balances', done => {
         new Promise(async () => {
-	        console.log(await LightAPI.balancesFor(account, network))
+
             done();
         })
     });
