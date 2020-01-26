@@ -294,7 +294,7 @@ export default class FIO extends Plugin {
 				ref_block_num: blockInfo.block_num & 0xffff,
 				ref_block_prefix: blockInfo.ref_block_prefix,
 				actions: [{
-					account: 'fio.token',
+					account:token.contract,
 					name: 'transfer',
 					authorization: [{
 						actor: account.sendable(),
