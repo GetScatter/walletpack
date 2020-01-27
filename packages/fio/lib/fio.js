@@ -40,7 +40,6 @@ export const eosjsUtil = getApiInstance();
 const MAINNET_CHAIN_ID = '4e46572250454b796d7296eec9e8896327ea82dd40f2cd74cf1b1d8ba90bcd77';
 
 const fetchPostParams = (params) => ({ method:"POST", body:JSON.stringify(params) })
-const getTableRows = (network, params) => fetch(`${network.fullhost()}/v1/chain/get_table_rows`, fetchPostParams(params)).then(x => x.json())
 const getChainData = (network, route, params = {}) => fetch(`${network.fullhost()}/v1/chain/${route}`, fetchPostParams(params)).then(x => x.json())
 
 const SCATTER_WALLET = 'scattertest@fiotestnet';
