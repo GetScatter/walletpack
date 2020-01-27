@@ -131,23 +131,14 @@ export default class FIO extends Plugin {
 
 	hasUntouchableTokens(){ return false; }
 
-	async balanceFor(account, token){
-		const balances = await Promise.race([
-			new Promise(resolve => setTimeout(() => resolve([]), 10000)),
-			getTableRows(account.network(), {
-				json:true,
-				code:token.contract,
-				scope:account.name,
-				table:'accounts',
-				limit:500
-			}).then(res => res.rows).catch(() => [])
-		]);
-
-		const row = balances.find(row => row.balance.split(" ")[1].toLowerCase() === token.symbol.toLowerCase());
-		return row ? row.balance.split(" ")[0] : 0;
+	async balanceFor(account){
+		return getChainData(account.network(), 'get_fio_balance', {
+			fio_public_key:account.publicKey
+		}).then(x => parseFloat(x.balance / (10**this.defaultDecimals())).toFixed(this.defaultDecimals()));
 	}
 
-	async balancesFor(account, tokens = []){
+	async balancesFor(account){
+		const tokens = [this.defaultToken()];
 		return (await Promise.all(tokens.map(async token => {
 			const t = token.clone();
 			t.amount = await this.balanceFor(account, token);
@@ -267,16 +258,38 @@ export default class FIO extends Plugin {
 	}
 
 
+	async getNames(network, publicKey){
+		return getChainData(network, 'get_fio_names', {
+			fio_public_key:publicKey,
+		})
+	}
+
+
+	async getPendingRequests(account, offset = 0){
+		return getChainData(account.network(), 'get_pending_fio_requests', {
+			fio_public_key: account.publicKey,
+			limit:100,
+			offset
+		}).then(x => {
+			if(x.hasOwnProperty('requests')) return x.requests;
+			return [];
+		})
+	}
+
+	async getFee(account, route){
+		return getChainData(account.network(), 'get_fee', {
+			"end_point": route,
+			"fio_address": this.accountFormatter(account)
+		}).then(x => x.fee).catch(() => null);
+	}
+
+
 
 	async transfer({account, to, amount, token}){
 
 		amount = parseInt(amount * (10**token.decimals));
 
-		const fee = await getChainData(account.network(), 'get_fee', {
-			"end_point": "transfer_tokens_pub_key",
-			"fio_address": this.accountFormatter(account)
-		});
-
+		const fee = await this.getFee(account, 'transfer_tokens_pub_key');
 		if(!fee) throw 'Could not get fee';
 
 		return this.buildAndSign(account, [{
@@ -289,15 +302,110 @@ export default class FIO extends Plugin {
 			data: {
 				payee_public_key: to,
 				amount,
-				max_fee: fee.fee,
+				max_fee: fee,
 				tpid:SCATTER_WALLET,
 				actor: Fio.accountHash(account.publicKey)
 			},
 		}]);
 	}
 
-	async linkAddress(){
+	async linkAddress(account, public_addresses){
 
+		// Addresses array example
+		/*
+		[
+			{
+				"token_code": "BTC",
+				"public_address": "1PMycacnJaSqwwJqjawXBErnLsZ7RkXUAs"
+			},
+			{
+				"token_code": "ETH",
+				"public_address": "0xab5801a7d398351b8be11c439e05c5b3259aec9b"
+			}
+		]
+		 */
+		const fee = await this.getFee(account, 'add_pub_address');
+		if(!fee) throw 'Could not get fee';
+
+		return this.buildAndSign(account, [{
+			account:'fio.address',
+			name: 'addaddress',
+			authorization: [{
+				actor: Fio.accountHash(account.publicKey),
+				permission: 'active',
+			}],
+			data: {
+				fio_address: this.accountFormatter(account),
+				public_addresses,
+				max_fee: fee,
+				tpid: SCATTER_WALLET,
+				actor:Fio.accountHash(account.publicKey)
+			},
+		}])
+
+
+	}
+
+	async requestFunds(account, to){
+		const fee = await this.getFee(account, 'new_funds_request');
+		if(!fee) throw 'Could not get fee';
+
+		return this.buildAndSign(account, [{
+			account:'fio.reqobt',
+			name: 'newfundsreq',
+			authorization: [{
+				actor: Fio.accountHash(account.publicKey),
+				permission: 'active',
+			}],
+			data:{
+				payer_fio_address: this.accountFormatter(account),
+				payee_fio_address: to,
+				content: "",
+				max_fee: fee,
+				tpid: SCATTER_WALLET,
+				actor:Fio.accountHash(account.publicKey)
+			},
+		}])
+	}
+
+	async rejectFundsRequest(account, id){
+		const fee = await this.getFee(account, 'reject_funds_request');
+		if(!fee) throw 'Could not get fee';
+
+		return this.buildAndSign(account, [{
+			account:'fio.reqobt',
+			name: 'rejectfndreq',
+			authorization: [{
+				actor: Fio.accountHash(account.publicKey),
+				permission: 'active',
+			}],
+			data:{
+				fio_request_id: id,
+				max_fee: fee,
+				tpid: SCATTER_WALLET,
+				actor:Fio.accountHash(account.publicKey)
+			},
+		}])
+	}
+
+	async renewAddress(account, id){
+		const fee = await this.getFee(account, 'renew_fio_address');
+		if(!fee) throw 'Could not get fee';
+
+		return this.buildAndSign(account, [{
+			account:'fio.address',
+			name: 'renewaddress',
+			authorization: [{
+				actor: Fio.accountHash(account.publicKey),
+				permission: 'active',
+			}],
+			data:{
+				"fio_address": this.accountFormatter(account),
+				max_fee: fee,
+				tpid: SCATTER_WALLET,
+				actor:Fio.accountHash(account.publicKey)
+			},
+		}])
 	}
 
 
