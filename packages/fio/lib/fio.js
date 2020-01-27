@@ -43,7 +43,7 @@ const fetchPostParams = (params) => ({ method:"POST", body:JSON.stringify(params
 const getTableRows = (network, params) => fetch(`${network.fullhost()}/v1/chain/get_table_rows`, fetchPostParams(params)).then(x => x.json())
 const getChainData = (network, route, params = {}) => fetch(`${network.fullhost()}/v1/chain/${route}`, fetchPostParams(params)).then(x => x.json())
 
-
+const SCATTER_WALLET = 'scattertest@fiotestnet';
 
 
 const EXPLORER = {
@@ -156,7 +156,7 @@ export default class FIO extends Plugin {
 		})));
 	}
 
-	defaultDecimals(){ return 4; }
+	defaultDecimals(){ return 10; }
 	defaultToken(){ return new Token(Blockchains.FIO, 'fio.token', 'FIO', 'FIO', this.defaultDecimals(), MAINNET_CHAIN_ID) }
 
 	async signerWithPopup(payload, accounts, rejector){
@@ -268,15 +268,46 @@ export default class FIO extends Plugin {
 
 
 
-	async transfer({account, to, amount, token, memo, promptForSignature = true}){
-		if(!this.isValidRecipient(to)) return {error:'Invalid recipient account name'};
-		amount = parseFloat(amount).toFixed(token.decimals);
-		const {contract, symbol} = token;
-		const amountWithSymbol = amount.indexOf(symbol) > -1 ? amount : `${amount} ${symbol}`;
+	async transfer({account, to, amount, token}){
+
+		amount = parseInt(amount * (10**token.decimals));
+
+		const fee = await getChainData(account.network(), 'get_fee', {
+			"end_point": "transfer_tokens_pub_key",
+			"fio_address": this.accountFormatter(account)
+		});
+
+		if(!fee) throw 'Could not get fee';
+
+		return this.buildAndSign(account, [{
+			account:token.contract,
+			name: 'trnsfiopubky',
+			authorization: [{
+				actor: Fio.accountHash(account.publicKey),
+				permission: 'active',
+			}],
+			data: {
+				payee_public_key: to,
+				amount,
+				max_fee: fee.fee,
+				tpid:SCATTER_WALLET,
+				actor: Fio.accountHash(account.publicKey)
+			},
+		}]);
+	}
+
+	async linkAddress(){
+
+	}
 
 
+
+
+
+
+	async buildAndSign(account, actions){
 		return new Promise(async (resolve, reject) => {
-			const api = this.getSignableApi(account, reject, promptForSignature);
+			const api = this.getSignableApi(account, reject, true);
 
 			const network = account.network();
 
@@ -293,20 +324,7 @@ export default class FIO extends Plugin {
 				expiration,
 				ref_block_num: blockInfo.block_num & 0xffff,
 				ref_block_prefix: blockInfo.ref_block_prefix,
-				actions: [{
-					account:token.contract,
-					name: 'transfer',
-					authorization: [{
-						actor: account.sendable(),
-						permission: 'active',
-					}],
-					data: {
-						from: account.sendable(),
-						to,
-						quantity:amount,
-						memo,
-					},
-				}]
+				actions
 			};
 
 			////////////////////////////////////////////////////////////////////////////////
@@ -350,7 +368,7 @@ export default class FIO extends Plugin {
 				reject(RpcError(json));
 			}
 
-			return resolve(json);
+			return resolve({transaction_id:json.transaction_id});
 		})
 	}
 

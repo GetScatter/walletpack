@@ -64,107 +64,107 @@ KeyPairService.isHardware = () => false;
 
 describe('fio', () => {
 
-    it('should check bip', done => {
-        new Promise(async () => {
-			assert(fio.bip() === `44'/235'/0'/0/`, 'Bip was not correct');
-            done();
-        })
-    });
-
-    it('should check return a default explorer', done => {
-        new Promise(async () => {
-        	const explorer = fio.defaultExplorer();
-			assert(explorer, 'Bad explorer');
-			assert(explorer.hasOwnProperty('name'), 'Bad explorer name');
-            done();
-        })
-    });
-
-    it('should check return a properly formatted account', done => {
-        new Promise(async () => {
-        	const account = Account.fromJson({
-		        name:'test',
-		        authority:'active'
-	        })
-			assert(fio.accountFormatter(account) === `test@active`, 'Bad account formatter');
-            done();
-        })
-    });
-
-    it('should get the endorsed network', done => {
-        new Promise(async () => {
-        	const network = fio.getEndorsedNetwork();
-			assert(network && network.blockchain === Blockchains.FIO, 'Bad endorsed network');
-			assert(fio.isEndorsedNetwork(network), 'Bad endorsed network check');
-            done();
-        })
-    });
-
-    it('should check a network connection', done => {
-        new Promise(async () => {
-        	const network = fio.getEndorsedNetwork();
-			assert(await fio.checkNetwork(network), 'Bad network connection');
-            done();
-        })
-    });
-
-    it('should get a chain ID', done => {
-        new Promise(async () => {
-        	const network = fio.getEndorsedNetwork();
-        	const chainId = await fio.getChainId(network);
-			assert(network.chainId === chainId, 'Bad chain id getter');
-            done();
-        })
-    });
-
-    it('should convert a private key to a public key', done => {
-        new Promise(async () => {
-			assert(fio.privateToPublic(TEST_KEY) === TEST_PUBLIC_KEY, 'Bad public key');
-			assert(fio.privateToPublic('5KAstr7sB1JHG2UUEgqk9pPnRZivXVBxkxdAtaybsAAQcEJEgVW') !== TEST_PUBLIC_KEY, 'Mismatched public key');
-            done();
-        })
-    });
-
-    it('should check if a private key is valid', done => {
-        new Promise(async () => {
-			assert(fio.validPrivateKey(TEST_KEY), 'Bad private key checker');
-			assert(!fio.validPrivateKey('5KAstr7sB1JHG2UUEgqk9pPnRZivXVBxkxdAtaybsAAQcEJEg'), 'Bad private key checker');
-            done();
-        })
-    });
-
-    it('should check if a public key is valid', done => {
-        new Promise(async () => {
-			assert(fio.validPublicKey(TEST_PUBLIC_KEY), 'Bad public key checker [1]');
-			assert(!fio.validPublicKey('FIO5cz5Jcyx6xugRuYxxcy2CLFwjU7SpyuYPQnNrewbYS9z'), 'Bad public key checker');
-            done();
-        })
-    });
-
-    it('should convert a private key to a buffer', done => {
-        new Promise(async () => {
-        	bufKey = fio.hexPrivateToBuffer(TEST_KEY);
-			assert(Buffer.isBuffer(bufKey), 'Bad buffer key');
-            done();
-        })
-    });
-
-    it('should convert a buffer to a private key', done => {
-        new Promise(async () => {
-			assert(fio.bufferToHexPrivate(bufKey) === TEST_KEY, 'Bad buffer key conversion');
-            done();
-        })
-    });
-
-    it('should be able to sign', done => {
-        new Promise(async () => {
-        	const network = fio.getEndorsedNetwork();
-	        const data = Ecc.sha256('1234');
-        	const signature = await fio.signer({data}, TEST_PUBLIC_KEY, true, true, TEST_KEY);
-			assert(signature && Ecc.recover(signature, data), 'Bad signature');
-            done();
-        })
-    });
+    // it('should check bip', done => {
+    //     new Promise(async () => {
+	// 		assert(fio.bip() === `44'/235'/0'/0/`, 'Bip was not correct');
+    //         done();
+    //     })
+    // });
+	//
+    // it('should check return a default explorer', done => {
+    //     new Promise(async () => {
+    //     	const explorer = fio.defaultExplorer();
+	// 		assert(explorer, 'Bad explorer');
+	// 		assert(explorer.hasOwnProperty('name'), 'Bad explorer name');
+    //         done();
+    //     })
+    // });
+	//
+    // it('should check return a properly formatted account', done => {
+    //     new Promise(async () => {
+    //     	const account = Account.fromJson({
+	// 	        name:'test',
+	// 	        authority:'active'
+	//         })
+	// 		assert(fio.accountFormatter(account) === `test@active`, 'Bad account formatter');
+    //         done();
+    //     })
+    // });
+	//
+    // it('should get the endorsed network', done => {
+    //     new Promise(async () => {
+    //     	const network = fio.getEndorsedNetwork();
+	// 		assert(network && network.blockchain === Blockchains.FIO, 'Bad endorsed network');
+	// 		assert(fio.isEndorsedNetwork(network), 'Bad endorsed network check');
+    //         done();
+    //     })
+    // });
+	//
+    // it('should check a network connection', done => {
+    //     new Promise(async () => {
+    //     	const network = fio.getEndorsedNetwork();
+	// 		assert(await fio.checkNetwork(network), 'Bad network connection');
+    //         done();
+    //     })
+    // });
+	//
+    // it('should get a chain ID', done => {
+    //     new Promise(async () => {
+    //     	const network = fio.getEndorsedNetwork();
+    //     	const chainId = await fio.getChainId(network);
+	// 		assert(network.chainId === chainId, 'Bad chain id getter');
+    //         done();
+    //     })
+    // });
+	//
+    // it('should convert a private key to a public key', done => {
+    //     new Promise(async () => {
+	// 		assert(fio.privateToPublic(TEST_KEY) === TEST_PUBLIC_KEY, 'Bad public key');
+	// 		assert(fio.privateToPublic('5KAstr7sB1JHG2UUEgqk9pPnRZivXVBxkxdAtaybsAAQcEJEgVW') !== TEST_PUBLIC_KEY, 'Mismatched public key');
+    //         done();
+    //     })
+    // });
+	//
+    // it('should check if a private key is valid', done => {
+    //     new Promise(async () => {
+	// 		assert(fio.validPrivateKey(TEST_KEY), 'Bad private key checker');
+	// 		assert(!fio.validPrivateKey('5KAstr7sB1JHG2UUEgqk9pPnRZivXVBxkxdAtaybsAAQcEJEg'), 'Bad private key checker');
+    //         done();
+    //     })
+    // });
+	//
+    // it('should check if a public key is valid', done => {
+    //     new Promise(async () => {
+	// 		assert(fio.validPublicKey(TEST_PUBLIC_KEY), 'Bad public key checker [1]');
+	// 		assert(!fio.validPublicKey('FIO5cz5Jcyx6xugRuYxxcy2CLFwjU7SpyuYPQnNrewbYS9z'), 'Bad public key checker');
+    //         done();
+    //     })
+    // });
+	//
+    // it('should convert a private key to a buffer', done => {
+    //     new Promise(async () => {
+    //     	bufKey = fio.hexPrivateToBuffer(TEST_KEY);
+	// 		assert(Buffer.isBuffer(bufKey), 'Bad buffer key');
+    //         done();
+    //     })
+    // });
+	//
+    // it('should convert a buffer to a private key', done => {
+    //     new Promise(async () => {
+	// 		assert(fio.bufferToHexPrivate(bufKey) === TEST_KEY, 'Bad buffer key conversion');
+    //         done();
+    //     })
+    // });
+	//
+    // it('should be able to sign', done => {
+    //     new Promise(async () => {
+    //     	const network = fio.getEndorsedNetwork();
+	//         const data = Ecc.sha256('1234');
+    //     	const signature = await fio.signer({data}, TEST_PUBLIC_KEY, true, true, TEST_KEY);
+	// 		assert(signature && Ecc.recover(signature, data), 'Bad signature');
+    //         done();
+    //     })
+    // });
 
     it('should be able to transfer tokens', done => {
         new Promise(async () => {
@@ -172,8 +172,9 @@ describe('fio', () => {
         	token.amount = 1;
 
         	const account = Account.fromJson({
-		        name:Fio.accountHash(TEST_PUBLIC_KEY),
-		        authority:'active',
+		        name:'scattertest',
+		        authority:'fiotestnet',
+		        publicKey:TEST_PUBLIC_KEY
 	        });
 
 	        // OVERRIDING NETWORK GETTER
@@ -183,11 +184,9 @@ describe('fio', () => {
 
         	const transferred = await fio.transfer({
 				account,
-		        to:Fio.accountHash('FIO6smr7ThQMWYBHzEvkzTZdxNNmUwxqh2VXdXZdDdzYHgakgqCeb'),
+		        to:'FIO6smr7ThQMWYBHzEvkzTZdxNNmUwxqh2VXdXZdDdzYHgakgqCeb',
 		        amount:1,
 		        token,
-		        memo:'walletpack testing',
-		        promptForSignature:false,
 	        });
 
         	console.log('transferred', JSON.stringify(transferred, null, 4));
