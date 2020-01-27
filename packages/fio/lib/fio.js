@@ -6,20 +6,13 @@ import Account from                 '@walletpack/core/models/Account'
 import KeyPairService from          '@walletpack/core/services/secure/KeyPairService'
 import ObjectHelpers from           '@walletpack/core/util/ObjectHelpers'
 import * as Actions from            '@walletpack/core/models/api/ApiActions';
-import * as StoreActions from       '@walletpack/core/store/constants'
 import Token from                   "@walletpack/core/models/Token";
-import AccountAction from           "@walletpack/core/models/AccountAction";
-import AccountService from          "@walletpack/core/services/blockchain/AccountService";
-import HistoricAction from          "@walletpack/core/models/histories/HistoricAction";
 import StoreService from            "@walletpack/core/services/utility/StoreService";
 import EventService from            "@walletpack/core/services/utility/EventService";
 import SigningService from          "@walletpack/core/services/secure/SigningService";
-import {POST} from                  "@walletpack/core/services/apis/BackendApiService";
 
 import {Ecc as ecc, Api, Fio, RpcError} from '@fioprotocol/fiojs';
-import {JsonRpc} from '@fioprotocol/fiojs/dist/tests/chain-jsonrpc';
-import LightAPI from "../../eosio/lib/api";
-import {base64ToBinary} from "@fioprotocol/fiojs/dist/chain-numeric";
+import {base64ToBinary, arrayToHex} from "@fioprotocol/fiojs/dist/chain-numeric";
 
 
 
@@ -215,7 +208,7 @@ export default class FIO extends Plugin {
 		return {
 			getAvailableKeys:async () => isSingleAccount ? [accounts.publicKey] : accounts.map(x => x.publicKey),
 			sign:async (transaction) => this.signerWithPopup({ transaction }, accounts, reject).then(signatures => {
-				return {signatures, serializedTransaction:transaction.serializedTransaction}
+				return {signatures, serializedTransaction:transaction.serializedTransaction, serializedContextFreeData:transaction.serializedContextFreeData}
 			})
 		}
 	}
@@ -434,37 +427,13 @@ export default class FIO extends Plugin {
 				actions
 			};
 
-			////////////////////////////////////////////////////////////////////////////////
-			// https://github.com/fioprotocol/fiojs/blob/master/src/chain-api.ts#L220
-			////////////////////////////////////////////////////////////////////////////////
-			const abis = await api.getTransactionAbis(transaction);
-			transaction = {
-				...transaction,
-				context_free_actions: await api.serializeActions(transaction.context_free_actions || []),
-				actions: await api.serializeActions(transaction.actions)
-			};
-			const serializedTransaction = api.serializeTransaction(transaction);
-			const serializedContextFreeData = api.serializeContextFreeData(transaction.context_free_data);
+			const result = await api.transact(transaction);
+			if(!result || !result.signatures.length) return reject({error:'No signature'});
 
-			const requiredKeys = [account.publicKey];
-			const signatures = await api.signatureProvider.sign({
-				chainId: network.chainId,
-				requiredKeys:[account.publicKey],
-				serializedTransaction,
-				serializedContextFreeData,
-				abis,
-			});
-
-			if(!signatures) reject('No signatures provided');
-
-			const arrayToHex = (data) => {
-				let result = '';
-				for (const x of data) result += ('00' + x.toString(16)).slice(-2);
-				return result.toUpperCase();
-			}
+			const {signatures, serializedTransaction, serializedContextFreeData} = result;
 
 			const tx = {
-				signatures:signatures.signatures,
+				signatures,
 				compression: 0,
 				packed_context_free_data: arrayToHex(serializedContextFreeData || new Uint8Array(0)),
 				packed_trx: arrayToHex(serializedTransaction),
