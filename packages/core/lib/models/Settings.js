@@ -37,7 +37,7 @@ export default class Settings {
 
 	    // {contract:[actions]}
 	    this.blacklistActions = {
-	    	'eos::eosio':['updateauth'],
+	    	'eos::eosio':['updateauth', 'linkauth'],
 	    	'eos::eosio.msig':['approve'],
 	    };
 

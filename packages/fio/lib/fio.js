@@ -228,7 +228,7 @@ export default class FIO extends Plugin {
 			getRawAbi: async (accountName) => {
 				const {abi} = (await this.fetchAbis(network, [accountName]))[0];
 				return { accountName, abi };
-			}
+			},
 		};
 
 		let params = {
@@ -436,8 +436,8 @@ export default class FIO extends Plugin {
 				signatures,
 				compression: 0,
 				packed_context_free_data: arrayToHex(serializedContextFreeData || new Uint8Array(0)),
-				packed_trx: arrayToHex(serializedTransaction),
-			}
+				packed_trx: arrayToHex(serializedTransaction)
+			};
 
 			const json = await getChainData(network, 'push_transaction', tx);
 			if (json.processed && json.processed.except) {

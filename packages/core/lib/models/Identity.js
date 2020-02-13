@@ -140,6 +140,7 @@ export default class Identity {
         // KYC
         this.kyc = false;
         this.ridl = -1;
+        this.fioDomain = null;
     }
 
     initialize(hash){
