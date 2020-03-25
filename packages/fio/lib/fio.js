@@ -11,8 +11,8 @@ import StoreService from            "@walletpack/core/services/utility/StoreServ
 import EventService from            "@walletpack/core/services/utility/EventService";
 import SigningService from          "@walletpack/core/services/secure/SigningService";
 
-import {Ecc as ecc, Api, Fio, RpcError} from '@fioprotocol/fiojs';
-import {base64ToBinary, arrayToHex} from "@fioprotocol/fiojs/dist/chain-numeric";
+import {Ecc as ecc, Api, Fio, RpcError, Numeric} from '@fioprotocol/fiojs';
+const {base64ToBinary, arrayToHex} = Numeric;
 
 
 
@@ -244,7 +244,7 @@ export default class FIO extends Plugin {
 		}
 
 		const api = new Api(params);
-		api.getCachedAbi = async accountName => (await this.fetchAbis(network, [accountName]))[0]
+		api.getCachedAbi = async accountName => (await this.fetchAbis(network, [accountName]))[0];
 
 		return api;
 	}
