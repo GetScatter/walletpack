@@ -85,7 +85,7 @@ export default class FIO extends Plugin {
 
 	hasAccountActions(){ return false; }
 	usesResources(){ return false; }
-	accountsAreImported(){ return true; }
+	accountsAreImported(){ return false; }
 
 	// TODO: Need to check FIO requirements
 	isValidRecipient(name){ return /(^[a-z1-5.]{1}([a-z1-5.]{0,10}[a-z1-5])?$)/g.test(name); }
