@@ -411,8 +411,14 @@ export default class EOS extends Plugin {
 	}
 
 	isValidRecipient(name){ return /(^[a-z1-5.]{1}([a-z1-5.]{0,10}[a-z1-5])?$)/g.test(name); }
-	privateToPublic(privateKey, prefix = null){ return ecc.PrivateKey(privateKey).toPublic().toString(prefix ? prefix : Blockchains.EOSIO.toUpperCase()); }
-	validPrivateKey(privateKey){ return privateKey.length >= 50 && ecc.isValidPrivate(privateKey); }
+	privateToPublic(privateKey, prefix = null){ try {
+		return ecc.PrivateKey(privateKey).toPublic().toString(prefix ? prefix : Blockchains.EOSIO.toUpperCase());
+	} catch(e) { return console.error(e); } }
+
+	validPrivateKey(privateKey){ try {
+		return privateKey.length >= 50 && ecc.isValidPrivate(privateKey);
+	} catch(e){ return console.error(e); } };
+
 	validPublicKey(publicKey, prefix = null){
 		try {
 			return ecc.PublicKey.fromStringOrThrow(publicKey, prefix ? prefix : Blockchains.EOSIO.toUpperCase());
