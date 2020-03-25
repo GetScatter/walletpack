@@ -47,7 +47,7 @@ const EXPLORER = {
 
 export default class FIO extends Plugin {
 
-	constructor(){ super('blockchain_type', PluginTypes.BLOCKCHAIN_SUPPORT) }
+	constructor(){ super(Blockchains.FIO, PluginTypes.BLOCKCHAIN_SUPPORT) }
 
 	bip(){ return `44'/235'/0'/0/` }
 	bustCache(){}
