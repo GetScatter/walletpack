@@ -123,6 +123,10 @@ export default class FIO extends Plugin {
 
 	hasUntouchableTokens(){ return false; }
 
+	accountHash(publicKey){
+		return Fio.accountHash(publicKey);
+	}
+
 	async balanceFor(account){
 		return getChainData(account.network(), 'get_fio_balance', {
 			fio_public_key:account.publicKey
