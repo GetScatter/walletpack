@@ -76,7 +76,21 @@ export default class FIO extends Plugin {
 
 	hasAccountActions(){ return false; }
 	usesResources(){ return false; }
-	accountsAreImported(){ return false; }
+	accountsAreImported(){ return true; }
+	async getImportableAccounts(keypair, network){
+		let publicKey = keypair.publicKeys.find(x => x.blockchain === 'fio');
+		if(publicKey){
+			return [
+				Account.fromJson({
+					keypairUnique: keypair.unique(),
+					networkUnique: network.unique(),
+					publicKey:publicKey.key,
+					name:this.accountHash(publicKey.key),
+					authority:'active',
+				})
+			]
+		} else return [];
+	}
 
 	isValidRecipient(name){ return /(^(?:(?=.{3,64}$)[a-zA-Z0-9]{1}(?:(?!-{2,}))[a-zA-Z0-9-]*(?:(?<!-))@[a-zA-Z0-9]{1}(?:(?!-{2,}))[a-zA-Z0-9-]*(?:(?<!-))$))/g.test(name); }
 
