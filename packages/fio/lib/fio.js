@@ -596,7 +596,6 @@ export default class FIO extends Plugin {
 			fiotransfer.type = 'transfer';
 			fiotransfer.name = 'transfer';
 			fiotransfer.data.amount = parseFloat(parseFloat(fiotransfer.data.amount / 10000000000).toFixed(this.defaultDecimals())) + ' FIO';
-			fiotransfer.data.max_fee = parseFloat(parseFloat(fiotransfer.data.max_fee / 10000000000).toFixed(this.defaultDecimals())) + ' FIO';
 			fiotransfer.data.to = await this.getNames(network, fiotransfer.data.payee_public_key).then(x => {
 				if(!x.fio_addresses || !x.fio_addresses.length) return fiotransfer.data.payee_public_key;
 				return x.fio_addresses[0].fio_address;
@@ -607,6 +606,9 @@ export default class FIO extends Plugin {
 		}
 
 		parsed.actions = parsed.actions.map(x => {
+			if(x.data && x.data.max_fee){
+				x.data.max_fee = parseFloat(parseFloat(x.data.max_fee / 10000000000).toFixed(this.defaultDecimals())) + ' FIO';
+			}
 			if(x.data && x.data.tpid) delete x.data.tpid;
 			return x;
 		});
