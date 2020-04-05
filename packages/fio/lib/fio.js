@@ -134,7 +134,7 @@ export default class FIO extends Plugin {
 	async balanceFor(account){
 		return getChainData(account.network(), 'get_fio_balance', {
 			fio_public_key:account.publicKey
-		}).then(x => parseFloat(x.balance / (10**this.defaultDecimals())).toFixed(this.defaultDecimals()));
+		}).then(x => parseFloat(x.balance / (10**this.defaultDecimals())).toFixed(this.defaultDecimals())).catch(() => 0);
 	}
 
 	async balancesFor(account){
