@@ -80,6 +80,12 @@ export default class FIO extends Plugin {
 	async getImportableAccounts(keypair, network){
 		let publicKey = keypair.publicKeys.find(x => x.blockchain === 'fio');
 		if(publicKey){
+			const fio_address = await this.getNames(network, publicKey.key).then(x => {
+				if(!x.fio_addresses || !x.fio_addresses.length) return null;
+				return x.fio_addresses[0].fio_address;
+			}).catch(() => {
+				return null;
+			});
 			return [
 				Account.fromJson({
 					keypairUnique: keypair.unique(),
@@ -87,6 +93,7 @@ export default class FIO extends Plugin {
 					publicKey:publicKey.key,
 					name:this.accountHash(publicKey.key),
 					authority:'active',
+					fio_address
 				})
 			]
 		} else return [];
@@ -461,8 +468,9 @@ export default class FIO extends Plugin {
 			};
 
 			const json = await getChainData(network, 'push_transaction', tx);
-			if (json.processed && json.processed.except) {
-				reject(RpcError(json));
+			console.log('json', json);
+			if (json.message) {
+				reject({error:json.fields[0].error});
 			}
 
 			return resolve({transaction_id:json.transaction_id});
@@ -559,6 +567,26 @@ export default class FIO extends Plugin {
 		payload.transaction.parsed = Object.assign({}, parsed);
 		payload.transaction.parsed.actions = await api.serializeActions(parsed.actions);
 		delete payload.transaction.abis;
+
+		const fiotransfer = parsed.actions.find(x => x.code === 'fio.token' && x.type === 'trnsfiopubky');
+		if(fiotransfer){
+			fiotransfer.type = 'transfer';
+			fiotransfer.name = 'transfer';
+			fiotransfer.data.amount = parseFloat(parseFloat(fiotransfer.data.amount / 10000000000).toFixed(this.defaultDecimals())) + ' FIO';
+			fiotransfer.data.max_fee = parseFloat(parseFloat(fiotransfer.data.max_fee / 10000000000).toFixed(this.defaultDecimals())) + ' FIO';
+			fiotransfer.data.to = await this.getNames(network, fiotransfer.data.payee_public_key).then(x => {
+				if(!x.fio_addresses || !x.fio_addresses.length) return fiotransfer.data.payee_public_key;
+				return x.fio_addresses[0].fio_address;
+			}).catch(() => {
+				return fiotransfer.data.payee_public_key;
+			});
+			delete fiotransfer.data.payee_public_key;
+		}
+
+		parsed.actions = parsed.actions.map(x => {
+			if(x.data && x.data.tpid) delete x.data.tpid;
+			return x;
+		});
 
 		return parsed.actions;
 	}
