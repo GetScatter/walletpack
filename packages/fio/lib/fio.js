@@ -29,20 +29,19 @@ const getApiInstance = rpc => {
 
 export const eosjsUtil = getApiInstance();
 
-// TODO: TESTNET!
-const MAINNET_CHAIN_ID = '4e46572250454b796d7296eec9e8896327ea82dd40f2cd74cf1b1d8ba90bcd77';
+const MAINNET_CHAIN_ID = '21dcae42c0182200e93f954a074011f9048a7624c6fe81d3c9541a614a88bd1c';
 
-const fetchPostParams = (params) => ({ method:"POST", body:JSON.stringify(params) })
+const fetchPostParams = (params) => ({ method:"POST", body:JSON.stringify(params) });
 const getChainData = (network, route, params = {}) => fetch(`${network.fullhost()}/v1/chain/${route}`, fetchPostParams(params)).then(x => x.json())
 
-const SCATTER_WALLET = 'scattertest@fiotestnet';
+const SCATTER_WALLET = 'scatter@fiomembers';
 
 
 const EXPLORER = {
-	"name":"Bloks",
-	"account":"https://bloks.io/account/{x}",
-	"transaction":"https://bloks.io/transaction/{x}",
-	"block":"https://bloks.io/block/{x}"
+	"name":"FIO Explorer",
+	"account":"https://explorer.fioprotocol.io/account/{x}",
+	"transaction":"https://explorer.fioprotocol.io/transaction/{x}",
+	"block":"https://explorer.fioprotocol.io/block/{x}"
 };
 
 export default class FIO extends Plugin {
@@ -63,16 +62,8 @@ export default class FIO extends Plugin {
 		])
 	}
 
-	/***
-	 * An endorsed network is simply a "default" network hardcoded into the plugin, providing an absolute fallback
-	 * for a node connection.
-	 * THIS MUST RETURN A NETWORK CLASS
-	 * EXAMPLE:
-	 return new Network('EOS Mainnet', 'https', 'nodes.get-scatter.com', 443, Blockchains.EOSIO, MAINNET_CHAIN_ID)
-	 */
 	getEndorsedNetwork(){
-		// TODO: TESTNET!
-		return new Network('FIO Mainnet', 'https', 'fiotestnet.greymass.com', 443, Blockchains.FIO, MAINNET_CHAIN_ID)
+		return new Network('FIO Mainnet', 'https', 'fio.greymass.com', 443, Blockchains.FIO, MAINNET_CHAIN_ID)
 	}
 
 	isEndorsedNetwork(network){
@@ -87,8 +78,7 @@ export default class FIO extends Plugin {
 	usesResources(){ return false; }
 	accountsAreImported(){ return false; }
 
-	// TODO: Need to check FIO requirements
-	isValidRecipient(name){ return /(^[a-z1-5.]{1}([a-z1-5.]{0,10}[a-z1-5])?$)/g.test(name); }
+	isValidRecipient(name){ return /(^(?:(?=.{3,64}$)[a-zA-Z0-9]{1}(?:(?!-{2,}))[a-zA-Z0-9-]*(?:(?<!-))@[a-zA-Z0-9]{1}(?:(?!-{2,}))[a-zA-Z0-9-]*(?:(?<!-))$))/g.test(name); }
 
 	privateToPublic(privateKey){ try {
 		return ecc.PrivateKey(privateKey).toPublic().toString('FIO');
