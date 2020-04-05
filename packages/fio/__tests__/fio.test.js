@@ -166,10 +166,8 @@ describe('fio', () => {
     //     })
     // });
 
-    it('should be able to transfer tokens', done => {
+    it('should be able to get balances', done => {
         new Promise(async () => {
-        	const token = fio.defaultToken();
-        	token.amount = 1;
 
         	const account = Account.fromJson({
 		        name:'scattertest',
@@ -182,21 +180,42 @@ describe('fio', () => {
 	        account.network = () => network;
 	        account.keypair = () => KEYPAIR;
 
-        	const transferred = await fio.transfer({
-				account,
-		        to:'FIO6smr7ThQMWYBHzEvkzTZdxNNmUwxqh2VXdXZdDdzYHgakgqCeb',
-		        amount:1,
-		        token,
-	        });
-
-        	console.log('transferred', JSON.stringify(transferred, null, 4));
-
-        	// const network = fio.getEndorsedNetwork();
-	        // const data = Ecc.sha256('1234');
-        	// const signature = await fio.signer({data}, TEST_PUBLIC_KEY, true, true, TEST_KEY);
-			// assert(signature && Ecc.recover(signature, data), 'Bad signature');
+	        console.log(await fio.balancesFor(account));
             done();
         })
     });
+
+    // it('should be able to transfer tokens', done => {
+    //     new Promise(async () => {
+    //     	const token = fio.defaultToken();
+    //     	token.amount = 1;
+	//
+    //     	const account = Account.fromJson({
+	// 	        name:'scattertest',
+	// 	        authority:'fiotestnet',
+	// 	        publicKey:TEST_PUBLIC_KEY
+	//         });
+	//
+	//         // OVERRIDING NETWORK GETTER
+	//         account.blockchain = () => Blockchains.FIO;
+	//         account.network = () => network;
+	//         account.keypair = () => KEYPAIR;
+	//
+    //     	const transferred = await fio.transfer({
+	// 			account,
+	// 	        to:'FIO6smr7ThQMWYBHzEvkzTZdxNNmUwxqh2VXdXZdDdzYHgakgqCeb',
+	// 	        amount:1,
+	// 	        token,
+	//         });
+	//
+    //     	console.log('transferred', JSON.stringify(transferred, null, 4));
+	//
+    //     	// const network = fio.getEndorsedNetwork();
+	//         // const data = Ecc.sha256('1234');
+    //     	// const signature = await fio.signer({data}, TEST_PUBLIC_KEY, true, true, TEST_KEY);
+	// 		// assert(signature && Ecc.recover(signature, data), 'Bad signature');
+    //         done();
+    //     })
+    // });
 
 });
