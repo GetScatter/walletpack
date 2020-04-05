@@ -287,6 +287,16 @@ export default class FIO extends Plugin {
 	}
 
 
+	async recipientToSendable(network, recipient, blockchain = Blockchains.FIO, symbol = Blockchains.FIO, formatter = x => x){
+		return getChainData(network, 'get_pub_address', {
+			"fio_address": recipient,
+			"chain_code": blockchain.toUpperCase(),
+			"token_code": symbol.toUpperCase()
+		}).then(x => {
+			if(!x.public_address) return 0;
+			return formatter(x.public_address);
+		})
+	}
 
 	async transfer({account, to, amount, token}){
 
