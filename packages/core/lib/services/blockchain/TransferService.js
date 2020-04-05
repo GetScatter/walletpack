@@ -60,6 +60,7 @@ export default class TransferService {
 		    case Blockchains.TRX: return transfer.txID;
 		    case Blockchains.ETH: return transfer.transactionHash;
 		    case Blockchains.BTC: return transfer.txid;
+		    case Blockchains.FIO: return transfer.transaction_id;
 	    }
 	    return null;
     }
