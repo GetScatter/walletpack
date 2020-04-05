@@ -18,6 +18,10 @@ export default class TransferService {
         return this.baseTransfer(params);
     }
 
+    static async [Blockchains.FIO](params){
+        return this.baseTransfer(params);
+    }
+
     static async [Blockchains.EOSIO](params){
     	params.recipient = params.recipient.toLowerCase();
         return this.baseTransfer(params);
