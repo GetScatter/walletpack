@@ -123,6 +123,7 @@ export default class FIO extends Plugin {
 	hexPrivateToBuffer(privateKey){
 		return new ecc.PrivateKey(privateKey).toBuffer();
 	}
+
 	bufferToHexPublicKeyOrAddress(buffer){
 		return ecc.PublicKey.fromBuffer(Buffer.from(buffer)).toString()
 	}

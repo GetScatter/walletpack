@@ -89,6 +89,7 @@ export default class BTC extends Plugin {
 		return bitcoin.ECPair.fromWIF(privateKey, SELECTED_NETWORK).privateKey;
 	}
 
+
 	bufferToHexPublicKeyOrAddress(buffer){
 		return bitcoin.payments.p2pkh({ pubkey:buffer }).address;
 	}
