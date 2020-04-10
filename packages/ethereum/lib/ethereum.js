@@ -114,6 +114,9 @@ export default class ETH extends Plugin {
 	hexPrivateToBuffer(privateKey){
 		return Buffer.from(privateKey, 'hex');
 	}
+	bufferToHexPublicKeyOrAddress(buffer){
+		return ethUtil.publicToAddress(ethUtil.importPublic(buffer)).toString('hex');
+	}
 
 	hasUntouchableTokens(){ return false; }
 

@@ -90,6 +90,9 @@ export default class TRX extends Plugin {
 	validPublicKey(address){ return utils.crypto.isAddressValid(address); }
 	bufferToHexPrivate(buffer){ return new Buffer(buffer).toString('hex') }
 	hexPrivateToBuffer(privateKey){ return Buffer.from(privateKey, 'hex'); }
+	bufferToHexPublicKeyOrAddress(buffer){
+		return utils.crypto.getBase58CheckAddress(utils.crypto.computeAddress(buffer));
+	}
 
 
 	hasUntouchableTokens(){ return false; }
