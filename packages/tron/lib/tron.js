@@ -92,7 +92,14 @@ export default class TRX extends Plugin {
 	hexPrivateToBuffer(privateKey){ return Buffer.from(privateKey, 'hex'); }
 
 	bufferToHexPublicKeyOrAddress(buffer){
-		return utils.crypto.getBase58CheckAddress(utils.crypto.computeAddress(buffer));
+		const ec = new (require('elliptic').ec)('secp256k1');
+		const pubkey = ec.keyFromPublic(buffer).getPublic();
+		let xHex = pubkey.x.toString('hex');
+		while (xHex.length < 64) xHex = `0${xHex}`;
+		let yHex = pubkey.y.toString('hex');
+		while (yHex.length < 64) yHex = `0${yHex}`;
+		const pubkeyBytes = Buffer.from(`04${xHex}${yHex}`, 'hex');
+		return utils.crypto.getBase58CheckAddress(utils.crypto.computeAddress(pubkeyBytes))
 	}
 
 
