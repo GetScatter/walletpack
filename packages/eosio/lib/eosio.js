@@ -113,11 +113,11 @@ export default class EOS extends Plugin {
 	constructor(){ super(Blockchains.EOSIO, PluginTypes.BLOCKCHAIN_SUPPORT) }
 
 
-	signatureProvider(accounts, reject){
+	signatureProvider(accounts, reject, prompt = true){
 		const isSingleAccount = accounts instanceof Account;
 		return {
 			getAvailableKeys:async () => isSingleAccount ? [accounts.publicKey] : accounts.map(x => x.publicKey),
-			sign:async (transaction) => this.signerWithPopup({ transaction }, accounts, reject).then(signatures => {
+			sign:async (transaction) => this.signerWithPopup({ transaction }, accounts, reject, prompt).then(signatures => {
 				return {signatures, serializedTransaction:transaction.serializedTransaction}
 			})
 		}
@@ -126,7 +126,7 @@ export default class EOS extends Plugin {
 	getSignableEosjs(accounts, reject, prompt = true, signatureProvider = null){
 		const isSingleAccount = accounts instanceof Account;
 		const rpc = new JsonRpc((isSingleAccount ? accounts.network() : accounts[0].network()).fullhost());
-		let params = {rpc, signatureProvider:signatureProvider ? signatureProvider : this.signatureProvider(accounts, reject)};
+		let params = {rpc, signatureProvider:signatureProvider ? signatureProvider : this.signatureProvider(accounts, reject, prompt)};
 		if(TextEncoder) params = Object.assign(rpc, {textEncoder:new TextEncoder(), textDecoder:new TextDecoder()});
 		return new Api(params);
 	}
@@ -741,7 +741,7 @@ export default class EOS extends Plugin {
 
 
 
-	async signerWithPopup(payload, accounts, rejector){
+	async signerWithPopup(payload, accounts, rejector, prompt = true){
 		return new Promise(async resolve => {
 
 			if(accounts instanceof Account){
@@ -764,9 +764,7 @@ export default class EOS extends Plugin {
 				id:1,
 			}
 
-			EventService.emit('popout', request).then( async ({result}) => {
-				if(!result || (!result.accepted || false)) return rejector({error:'Could not get signature'});
-
+			const sign = async () => {
 				let signatures = [];
 				for(let i = 0; i < accounts.length; i++){
 					let account = accounts[i];
@@ -780,7 +778,15 @@ export default class EOS extends Plugin {
 					return acc;
 				}, []);
 
-				resolve(signatures);
+				return signatures;
+			}
+
+			if(!prompt) return resolve(await sign());
+
+			EventService.emit('popout', request).then( async ({result}) => {
+				if(!result || (!result.accepted || false)) return rejector({error:'Could not get signature'});
+
+				resolve(await sign());
 			}, true);
 		})
 	}

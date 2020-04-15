@@ -189,6 +189,7 @@ export default class BTC extends Plugin {
 			if(!privateKey) privateKey = await KeyPairService.publicToPrivate(publicKey);
 			if(!privateKey) return;
 
+			if(typeof privateKey === 'string') privateKey = this.hexPrivateToBuffer(privateKey);
 			const key = bitcoin.ECPair.fromPrivateKey(Buffer.from(privateKey), {network:SELECTED_NETWORK});
 			const txb = bitcoin.TransactionBuilder.fromTransaction(bitcoin.Transaction.fromHex(transaction), SELECTED_NETWORK)
 

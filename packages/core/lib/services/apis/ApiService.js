@@ -290,31 +290,20 @@ export default class ApiService {
 			network = StoreService.get().state.scatter.settings.networks.find(x => x.unique() === Network.fromJson(network).unique());
 			if(!network) return resolve({id:request.id, result:Error.noNetwork()});
 
-			let symbol = '';
-			if(options.hasOwnProperty('symbol')) symbol = options.symbol;
-			symbol = network.systemToken().symbol;
+			request.payload.memo = network.blockchain === 'eos' ? options.hasOwnProperty('memo') ? options.memo : '' : '';
 
-			let contract = '';
-			if(options.hasOwnProperty('contract')) contract = options.contract;
-			contract = network.systemToken().contract;
-
-			request.payload.memo = network.blockchain === 'eos'
-				? options.hasOwnProperty('memo') ? options.memo : ''
-				: '';
-
-			request.payload.symbol = symbol;
-			request.payload.contract = contract;
+			request.payload.symbol = options.hasOwnProperty('symbol') ? options.symbol : network.systemToken().symbol;
+			request.payload.contract = options.hasOwnProperty('contract') ? options.contract : network.systemToken().contract;
 
 			EventService.emit('popout', request).then( async ({result}) => {
 				if(!result) return resolve({id:request.id, result:Error.signatureError("signature_rejected", "User rejected the transfer request")});
 				const account = Account.fromJson(result.account);
 				const plugin = PluginRepository.plugin(network.blockchain);
-				const options = request.payload || {};
 				const token = Token.fromJson({
-					contract:contract,
+					contract:request.payload.contract,
 					blockchain:network.blockchain,
-					symbol,
-					decimals:options.decimals || PluginRepository.plugin(network.blockchain).defaultDecimals(),
+					symbol:request.payload.symbol,
+					decimals:options.hasOwnProperty('decimals') ? options.decimals : network.systemToken().defaultDecimals(),
 					chainId:account.network().chainId
 				});
 				const sent = await PluginRepository.plugin(network.blockchain).transfer({

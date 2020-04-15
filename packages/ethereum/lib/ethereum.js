@@ -116,7 +116,7 @@ export default class ETH extends Plugin {
 	}
 
 	bufferToHexPublicKeyOrAddress(buffer){
-		return ethUtil.publicToAddress(ethUtil.importPublic(buffer)).toString('hex');
+		return ethUtil.addHexPrefix(ethUtil.publicToAddress(ethUtil.importPublic(buffer)).toString('hex'));
 	}
 
 	hasUntouchableTokens(){ return false; }
@@ -184,8 +184,13 @@ export default class ETH extends Plugin {
 		const {symbol} = token;
 		const isEth = token.uniqueWithChain() === this.defaultToken().uniqueWithChain();
 		return new Promise(async (resolve, reject) => {
+			const finished = x => {
+				killCachedInstance(account.network(), wallet);
+				resolve(x);
+			};
+
 			const wallet = new ScatterEthereumWallet(account, async (transaction, callback) => {
-				const payload = { transaction, blockchain:Blockchains.TRX, network:account.network(), requiredFields:{}, abi:isEth ? null : erc20abi };
+				const payload = { transaction, blockchain:Blockchains.ETH, network:account.network(), requiredFields:{}, abi:isEth ? null : erc20abi };
 				const signatures = promptForSignature
 					? await this.signerWithPopup(payload, account, x => finished(x), token)
 					: await SigningService.sign(account.network(), payload, account.publicKey, false, false);
@@ -193,11 +198,6 @@ export default class ETH extends Plugin {
 				if(callback) callback(null, signatures);
 				return signatures;
 			});
-
-			const finished = x => {
-				killCachedInstance(account.network(), wallet);
-				resolve(x);
-			};
 
 			const [web3, engine] = getCachedInstance(account.network(), wallet);
 
@@ -234,7 +234,7 @@ export default class ETH extends Plugin {
 
 	async signerWithPopup(payload, account, rejector, token = null){
 		return new Promise(async resolve => {
-			payload.messages = await this.requestParser(payload.transaction, payload.hasOwnProperty('abi') ? payload.abi : null, token);
+			payload.messages = await this.requestParser(payload.transaction, account.network(), payload.hasOwnProperty('abi') ? payload.abi : null, token);
 			payload.identityKey = StoreService.get().state.scatter.keychain.identities[0].publicKey;
 			payload.participants = [account];
 			payload.network = account.network();
