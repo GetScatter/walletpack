@@ -286,6 +286,17 @@ export default class FIO extends Plugin {
 	}
 
 
+	async getSentRequests(account, offset = 0){
+		return getChainData(account.network(), 'get_sent_fio_requests', {
+			fio_public_key: account.publicKey,
+			limit:100,
+			offset
+		}).then(x => {
+			if(x.hasOwnProperty('requests')) return x.requests;
+			return [];
+		})
+	}
+
 	async getPendingRequests(account, offset = 0){
 		return getChainData(account.network(), 'get_pending_fio_requests', {
 			fio_public_key: account.publicKey,
@@ -341,20 +352,6 @@ export default class FIO extends Plugin {
 	}
 
 	async linkAddress(account, public_addresses){
-
-		// Addresses array example
-		/*
-		[
-			{
-				"token_code": "BTC",
-				"public_address": "1PMycacnJaSqwwJqjawXBErnLsZ7RkXUAs"
-			},
-			{
-				"token_code": "ETH",
-				"public_address": "0xab5801a7d398351b8be11c439e05c5b3259aec9b"
-			}
-		]
-		 */
 		const fee = await this.getFee(account, 'add_pub_address');
 		if(fee === null) throw 'Could not get fee';
 
@@ -373,8 +370,6 @@ export default class FIO extends Plugin {
 				actor:Fio.accountHash(account.publicKey)
 			},
 		}])
-
-
 	}
 
 	async registerAddress(account, address){
