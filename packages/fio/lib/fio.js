@@ -48,6 +48,13 @@ export default class FIO extends Plugin {
 
 	constructor(){ super(Blockchains.FIO, PluginTypes.BLOCKCHAIN_SUPPORT) }
 
+	async createSharedSecret(publicKey, otherPublicKey, privateKey = null){
+		if(!privateKey) privateKey = await KeyPairService.publicToPrivate(publicKey);
+		if (!privateKey) return;
+
+		return ecc.PrivateKey(privateKey).getSharedSecret(otherPublicKey);
+	}
+
 	bip(){ return `44'/235'/0'/0/` }
 	bustCache(){}
 	defaultExplorer(){ return EXPLORER; }

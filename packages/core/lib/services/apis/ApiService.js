@@ -413,6 +413,23 @@ export default class ApiService {
 	}
 
 
+	static async [Actions.CREATE_SHARED_SECRET](request){
+		const {origin, scatterPublicKey, otherPublicKey} = request.payload;
+
+		const identity = PermissionService.identityFromPermissions(origin, false);
+		if(!identity) return {id:request.id, result:Error.identityMissing()};
+
+		const account = identity.accounts.find(x => x.publicKey === scatterPublicKey);
+		if(!account) return {id:request.id, result:Error.signatureAccountMissing()};
+
+		const plugin = PluginRepository.plugin(account.network().blockchain);
+		if(!plugin || typeof plugin.createSharedSecret !== 'function')
+			return {id:request.id, result:Error.sharedSecretNotAvailable()};
+
+		return {id:request.id, result:(await plugin.createSharedSecret(account.publicKey, otherPublicKey)).toString('hex')};
+	}
+
+
 	static async [Actions.GET_AVATAR](request){
 		const {payload} = request;
 		const {origin} = payload;

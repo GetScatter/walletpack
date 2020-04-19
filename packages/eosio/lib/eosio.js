@@ -131,16 +131,12 @@ export default class EOS extends Plugin {
 		return new Api(params);
 	}
 
+	async createSharedSecret(publicKey, otherPublicKey, privateKey = null){
+		if(!privateKey) privateKey = await KeyPairService.publicToPrivate(publicKey);
+		if (!privateKey) return;
 
-
-
-
-
-
-
-
-
-
+		return ecc.PrivateKey(privateKey).getSharedSecret(otherPublicKey);
+	}
 
 	bip(){ return `44'/194'/0'/0/`}
 	bustCache(){  }

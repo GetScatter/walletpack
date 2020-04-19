@@ -50,6 +50,10 @@ export default class Error {
         return this.signatureError("account_missing", "You are trying to sign a request with an account that isn't currently linked or doesn't exist in the user's Scatter");
     }
 
+    static sharedSecretNotAvailable(){
+        return this.signatureError("no_shared_secret", "The blockchain you want to use to create a shared secret does not support creating them.");
+    }
+
     static cantParseTransaction(){
         return this.signatureError("parsing_error", "Something happened while trying to parse the transaction internally.");
     }
