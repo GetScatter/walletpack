@@ -65,7 +65,10 @@ export default class FIO extends Plugin {
 	checkNetwork(network){
 		return Promise.race([
 			new Promise(resolve => setTimeout(() => resolve(null), 2000)),
-			fetch(`${network.fullhost()}/v1/chain/get_info`).then(() => true).catch(() => false),
+			fetch(`${network.fullhost()}/v1/chain/get_info`).then(() => true).catch(err=> {
+				console.error(err);
+				return false;
+			}),
 		])
 	}
 
@@ -106,7 +109,7 @@ export default class FIO extends Plugin {
 		} else return [];
 	}
 
-	isValidRecipient(name){ return /(^(?:(?=.{3,64}$)[a-zA-Z0-9]{1}(?:(?!-{2,}))[a-zA-Z0-9-]*(?:(?<!-))@[a-zA-Z0-9]{1}(?:(?!-{2,}))[a-zA-Z0-9-]*(?:(?<!-))$))/g.test(name); }
+	isValidRecipient(name){ return this.validPublicKey(name) || /(^(?:(?=.{3,64}$)[a-zA-Z0-9]{1}(?:(?!-{2,}))[a-zA-Z0-9-]*(?:(?<!-))@[a-zA-Z0-9]{1}(?:(?!-{2,}))[a-zA-Z0-9-]*(?:(?<!-))$))/g.test(name); }
 
 	privateToPublic(privateKey){ try {
 		return ecc.PrivateKey(privateKey).toPublic().toString('FIO');
@@ -171,7 +174,7 @@ export default class FIO extends Plugin {
 	defaultDecimals(){ return 9; }
 	defaultToken(){ return new Token(Blockchains.FIO, 'fio.token', 'FIO', 'FIO', this.defaultDecimals(), MAINNET_CHAIN_ID) }
 
-	async signerWithPopup(payload, accounts, rejector){
+	async signerWithPopup(payload, accounts, rejector, prompt = true){
 		return new Promise(async resolve => {
 
 			if(accounts instanceof Account){
@@ -188,15 +191,13 @@ export default class FIO extends Plugin {
 			const request = {
 				payload,
 				origin:payload.origin,
-				blockchain:'eos',
+				blockchain:'fio',
 				requiredFields:{},
 				type:Actions.SIGN,
 				id:1,
 			}
 
-			EventService.emit('popout', request).then( async ({result}) => {
-				if(!result || (!result.accepted || false)) return rejector({error:'Could not get signature'});
-
+			const sign = async () => {
 				let signatures = [];
 				for(let i = 0; i < accounts.length; i++){
 					let account = accounts[i];
@@ -210,7 +211,15 @@ export default class FIO extends Plugin {
 					return acc;
 				}, []);
 
-				resolve(signatures);
+				return signatures;
+			}
+
+			if(!prompt) return resolve(await sign());
+
+			EventService.emit('popout', request).then( async ({result}) => {
+				if(!result || (!result.accepted || false)) return rejector({error:'Could not get signature'});
+
+				resolve(await sign());
 			}, true);
 		})
 	}
@@ -232,11 +241,11 @@ export default class FIO extends Plugin {
 
 
 
-	signatureProvider(accounts, reject){
+	signatureProvider(accounts, reject, prompt = true){
 		const isSingleAccount = accounts instanceof Account;
 		return {
 			getAvailableKeys:async () => isSingleAccount ? [accounts.publicKey] : accounts.map(x => x.publicKey),
-			sign:async (transaction) => this.signerWithPopup({ transaction }, accounts, reject).then(signatures => {
+			sign:async (transaction) => this.signerWithPopup({ transaction }, accounts, reject, prompt).then(signatures => {
 				return {signatures, serializedTransaction:transaction.serializedTransaction, serializedContextFreeData:transaction.serializedContextFreeData}
 			})
 		}
@@ -263,7 +272,7 @@ export default class FIO extends Plugin {
 		let params = {
 			abiProvider,
 			authorityProvider:this.authorityProvider(accounts, reject),
-			signatureProvider:signatureProvider ? signatureProvider : this.signatureProvider(accounts, reject),
+			signatureProvider:signatureProvider ? signatureProvider : this.signatureProvider(accounts, reject, prompt),
 			chainId:network.chainId
 		};
 
@@ -324,6 +333,29 @@ export default class FIO extends Plugin {
 		}).then(x => {
 			if(!x.public_address) return null;
 			return formatter(x.public_address);
+		})
+	}
+
+
+	async getAllPubAddresses(account){
+		return getChainData(account.network(), 'get_table_rows', {
+			json:true,
+			code: 'fio.address',
+			table: 'fionames',
+			scope: 'fio.address',
+			key_type: 'name',
+			index_position: 4,
+			lower_bound: account.name,
+			upper_bound: account.name,
+			limit: 10,
+		}).then(x => {
+			if(!x.rows || !x.rows.length) return [];
+			return x.rows.reduce((acc, row) => {
+				row.addresses.map(add => {
+					acc.push({blockchain:add.chain_code.toLowerCase(), symbol:add.token_code, address:add.public_address});
+				});
+				return acc;
+			}, [])
 		})
 	}
 
@@ -395,7 +427,25 @@ export default class FIO extends Plugin {
 
 	}
 
-	async requestFunds(account, to){
+	// Dumb hack, fiojs doesn't expose the actual class.
+	async getSharedSecretObject(sharedSecret){
+		const fakeKeys = await ecc.PrivateKey.unsafeRandomKey();
+		const shared = Fio.createSharedCipher(Object.assign(encoderOptions, {privateKey:fakeKeys.toWif(), publicKey:fakeKeys.toPublic().toString()}));
+		shared.sharedSecret = sharedSecret;
+		return shared;
+	}
+
+	async encrypt(contentType, content, sharedSecret){
+		sharedSecret = await this.getSharedSecretObject(sharedSecret);
+		return sharedSecret.encrypt(contentType, content);
+	}
+
+	async decrypt(contentType, content, sharedSecret){
+		sharedSecret = await this.getSharedSecretObject(sharedSecret);
+		return sharedSecret.decrypt(contentType, content);
+	}
+
+	async requestFunds(account, to, content = ""){
 		const fee = await this.getFee(account, 'new_funds_request');
 		if(fee === null) throw 'Could not get fee';
 
@@ -407,9 +457,9 @@ export default class FIO extends Plugin {
 				permission: 'active',
 			}],
 			data:{
-				payer_fio_address: account.fio_address,
-				payee_fio_address: to,
-				content: "",
+				payer_fio_address: to,
+				payee_fio_address: account.fio_address,
+				content: content,
 				max_fee: fee,
 				tpid: SCATTER_WALLET,
 				actor:Fio.accountHash(account.publicKey)
@@ -437,6 +487,29 @@ export default class FIO extends Plugin {
 		}])
 	}
 
+	async recordRequestData(account, id, to, content){
+		const fee = await this.getFee(account, 'record_obt_data');
+		if(fee === null) throw 'Could not get fee';
+
+		return this.buildAndSign(account, [{
+			account:'fio.reqobt',
+			name: 'recordobt',
+			authorization: [{
+				actor: Fio.accountHash(account.publicKey),
+				permission: 'active',
+			}],
+			data:{
+				payer_fio_address: account.fio_address,
+				payee_fio_address: to,
+				content: content,
+				fio_request_id:id,
+				max_fee: fee,
+				tpid: SCATTER_WALLET,
+				actor:Fio.accountHash(account.publicKey)
+			},
+		}], false)
+	}
+
 	async renewAddress(account, id){
 		const fee = await this.getFee(account, 'renew_fio_address');
 		if(fee === null) throw 'Could not get fee';
@@ -462,9 +535,9 @@ export default class FIO extends Plugin {
 
 
 
-	async buildAndSign(account, actions){
+	async buildAndSign(account, actions, prompt = true){
 		return new Promise(async (resolve, reject) => {
-			const api = this.getSignableApi(account, reject, true);
+			const api = this.getSignableApi(account, reject, prompt);
 
 			const network = account.network();
 
@@ -481,7 +554,12 @@ export default class FIO extends Plugin {
 				expiration,
 				ref_block_num: blockInfo.block_num & 0xffff,
 				ref_block_prefix: blockInfo.ref_block_prefix,
-				actions
+				max_net_usage_words: 0,
+				max_cpu_usage_ms: 0,
+				delay_sec: 0,
+				context_free_actions:[],
+				transaction_extensions:[],
+				actions,
 			};
 
 			const result = await api.transact(transaction);
@@ -497,11 +575,8 @@ export default class FIO extends Plugin {
 			};
 
 			const json = await getChainData(network, 'push_transaction', tx);
-			console.log('json', json);
-			if (json.message) {
-				reject({error:json.fields[0].error});
-			}
 
+			if (json.message) return reject({error:json.message});
 			return resolve({transaction_id:json.transaction_id});
 		})
 	}

@@ -9,12 +9,13 @@ import Keypair from "../../core/lib/models/Keypair";
 import PluginRepository from "../../core/lib/plugins/PluginRepository";
 import StoreService from "../../core/lib/services/utility/StoreService";
 import KeyPairService from "../../core/lib/services/secure/KeyPairService";
+import Network from "@walletpack/core/lib/models/Network";
 
 const {assert} = require('chai');
 require('isomorphic-fetch');
 const fio = new (require('../lib/fio').default)();
 
-const network = fio.getEndorsedNetwork();
+const NETWORK = new Network('FIO', 'https', 'fiotestnet.greymass.com', 443, Blockchains.FIO, 'b20901380af44ef59c5918439a1f9a41d83669020319a80574b804a5f95cbd7e')
 
 const TEST_KEY = '5KAztr7sB1JHG2UUEgqk9pPnRZivXVBxkxdAtaybsAAQcEJEgVW';
 const TEST_PUBLIC_KEY = 'FIO5cz5Jcyx6xugRuYxxcy2CLFwjU7SpyuYPQnNrewbYS9zaVtt5s';
@@ -26,7 +27,7 @@ const KEYPAIR = Keypair.fromJson({
 	publicKeys:[{key:TEST_PUBLIC_KEY, blockchain:Blockchains.FIO}]
 })
 
-KEYPAIR.network = fio.getEndorsedNetwork;
+KEYPAIR.network = NETWORK;
 
 // Overriding signer to include private key getter.
 SigningService.init(async (network, publicKey, payload, arbitrary = false, isHash = false) => {
@@ -158,32 +159,32 @@ describe('fio', () => {
 	//
     // it('should be able to sign', done => {
     //     new Promise(async () => {
-    //     	const network = fio.getEndorsedNetwork();
 	//         const data = Ecc.sha256('1234');
     //     	const signature = await fio.signer({data}, TEST_PUBLIC_KEY, true, true, TEST_KEY);
 	// 		assert(signature && Ecc.recover(signature, data), 'Bad signature');
     //         done();
     //     })
     // });
-
-    it('should be able to get balances', done => {
-        new Promise(async () => {
-
-        	const account = Account.fromJson({
-		        name:'scattertest',
-		        authority:'fiotestnet',
-		        publicKey:TEST_PUBLIC_KEY
-	        });
-
-	        // OVERRIDING NETWORK GETTER
-	        account.blockchain = () => Blockchains.FIO;
-	        account.network = () => network;
-	        account.keypair = () => KEYPAIR;
-
-	        console.log(await fio.balancesFor(account));
-            done();
-        })
-    });
+	//
+    // it('should be able to get balances', done => {
+    //     new Promise(async () => {
+	//
+    //     	const account = Account.fromJson({
+	// 	        name:'scattertest',
+	// 	        authority:'fiotestnet',
+	// 	        publicKey:TEST_PUBLIC_KEY
+	//         });
+	//
+	//         // OVERRIDING NETWORK GETTER
+	//         account.blockchain = () => Blockchains.FIO;
+	//         account.network = () => NETWORK;
+	//         account.keypair = () => KEYPAIR;
+	//
+	//         const balances = await fio.balancesFor(account);
+	//         assert(balances.length > 0, "Could not find balances");
+    //         done();
+    //     })
+    // });
 
     // it('should be able to transfer tokens', done => {
     //     new Promise(async () => {
@@ -198,7 +199,7 @@ describe('fio', () => {
 	//
 	//         // OVERRIDING NETWORK GETTER
 	//         account.blockchain = () => Blockchains.FIO;
-	//         account.network = () => network;
+	//         account.network = () => NETWORK;
 	//         account.keypair = () => KEYPAIR;
 	//
     //     	const transferred = await fio.transfer({
@@ -209,13 +210,72 @@ describe('fio', () => {
 	//         });
 	//
     //     	console.log('transferred', JSON.stringify(transferred, null, 4));
-	//
-    //     	// const network = fio.getEndorsedNetwork();
-	//         // const data = Ecc.sha256('1234');
-    //     	// const signature = await fio.signer({data}, TEST_PUBLIC_KEY, true, true, TEST_KEY);
-	// 		// assert(signature && Ecc.recover(signature, data), 'Bad signature');
     //         done();
     //     })
     // });
+
+    // it('should be able to create an encrypted request', done => {
+    //     new Promise(async () => {
+    //     	const key = await Ecc.PrivateKey.unsafeRandomKey();
+    //     	const sharedSecretBuffer = await fio.createSharedSecret(TEST_PUBLIC_KEY, key.toPublic().toString(), TEST_KEY);
+    //     	const sharedSecretObject = await fio.getSharedSecretObject(sharedSecretBuffer);
+    //     	console.log('sharedSecretObject', sharedSecretObject);
+	//
+	//         const content = {
+	// 	        payee_public_address:'test@test',
+	// 	        amount:'1.0000',
+	// 	        chain_code:'EOS',
+	// 	        token_code:'EOS',
+	// 	        memo:'Testing',
+	// 	        hash:'',
+	// 	        offline_url:'',
+	//         };
+	//
+	//         const encrypted = await fio.encrypt('new_funds_content', content, sharedSecretBuffer);
+	//         console.log(encrypted);
+	//         const decrypted = await fio.decrypt('new_funds_content', encrypted, sharedSecretBuffer);
+	//         console.log(decrypted);
+	//
+	//         const account = Account.fromJson({
+	// 	        name:'xo1lxbogf2z3',
+	// 	        authority:'active',
+	// 	        publicKey:TEST_PUBLIC_KEY,
+	// 	        fio_address:'testtest21s@fiotestnet',
+	//         });
+	//
+	//         // OVERRIDING NETWORK GETTER
+	//         account.blockchain = () => Blockchains.FIO;
+	//         account.network = () => NETWORK;
+	//         account.keypair = () => KEYPAIR;
+	//
+	//         const result = await fio.requestFunds(account, 'cryptolions@fiotestnet', encrypted);
+	//         console.log('result', result);
+	//
+    //         done();
+    //     })
+    // });
+
+    it('should be able to create an encrypted request', done => {
+        new Promise(async () => {
+
+
+	        const account = Account.fromJson({
+		        name:'ldpkmxyzmedm',
+		        authority:'active',
+		        publicKey:'FIO8RgVArXfQmk5FK7isetkQf51ERnxpmi1eJStytcmWaDLWM5GLd',
+		        fio_address:'scattette@fiotestnet',
+	        });
+
+	        // OVERRIDING NETWORK GETTER
+	        account.blockchain = () => Blockchains.FIO;
+	        account.network = () => NETWORK;
+	        account.keypair = () => KEYPAIR;
+
+	        const result = await fio.getAllPubAddresses(account);
+	        console.log('result', JSON.stringify(result));
+
+            done();
+        })
+    });
 
 });
