@@ -417,8 +417,11 @@ export default class ApiService {
 
 	static async [Actions.CREATE_ENCRYPTION_KEY](request){
 		let {origin, scatterPublicKey, otherPublicKey, nonce} = request.payload;
-		if(nonce) nonce = nonce.toString().trim();
-		if(!nonce.length) nonce = null;
+		if(nonce) {
+			nonce = nonce.toString().trim();
+			if(!nonce.length) nonce = null;
+		}
+
 
 		const identity = PermissionService.identityFromPermissions(origin, false);
 		if(!identity) return {id:request.id, result:Error.identityMissing()};
