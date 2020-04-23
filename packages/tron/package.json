@@ -1,6 +1,6 @@
 {
   "name": "@walletpack/tron",
-  "version": "0.0.60",
+  "version": "0.0.61",
   "description": "> TODO: description",
   "author": "GetScatter Ltd. 2019",
   "homepage": "",
@@ -15,7 +15,7 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@walletpack/core": "^1.0.48",
+    "@walletpack/core": "^1.0.49",
     "elliptic": "^6.5.2",
     "ethereumjs-util": "^6.1.0",
     "tronweb": "^2.8.0"
