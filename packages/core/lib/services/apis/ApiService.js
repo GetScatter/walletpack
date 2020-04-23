@@ -26,6 +26,8 @@ import Framework from "../utility/Framework";
 import EventService from "../utility/EventService";
 import SigningService from "../../services/secure/SigningService";
 
+import ecc from 'eosjs-ecc';
+
 let blocked = [];
 export default class ApiService {
 
@@ -413,8 +415,8 @@ export default class ApiService {
 	}
 
 
-	static async [Actions.CREATE_SHARED_SECRET](request){
-		const {origin, scatterPublicKey, otherPublicKey} = request.payload;
+	static async [Actions.CREATE_ENCRYPTION_KEY](request){
+		let {origin, scatterPublicKey, otherPublicKey, nonce} = request.payload;
 
 		const identity = PermissionService.identityFromPermissions(origin, false);
 		if(!identity) return {id:request.id, result:Error.identityMissing()};
@@ -426,7 +428,12 @@ export default class ApiService {
 		if(!plugin || typeof plugin.createSharedSecret !== 'function')
 			return {id:request.id, result:Error.sharedSecretNotAvailable()};
 
-		return {id:request.id, result:(await plugin.createSharedSecret(account.publicKey, otherPublicKey)).toString('hex')};
+		if(!nonce) nonce = (IdGenerator.text(256) + (+new Date())).toString();
+
+		return {id:request.id, result:{
+			nonce,
+			key:ecc.sha256(nonce+(await plugin.createSharedSecret(account.publicKey, otherPublicKey)).toString('hex'))
+		}};
 	}
 
 

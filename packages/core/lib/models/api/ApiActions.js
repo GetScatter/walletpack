@@ -14,4 +14,4 @@ export const SIGN_ARBITRARY =                   'requestArbitrarySignature';
 export const SUGGEST_NETWORK =                  'requestAddNetwork';
 export const AUTHENTICATE =                     'authenticate';
 export const UPDATE_IDENTITY =                  'updateIdentity';
-export const CREATE_SHARED_SECRET =             'createSharedSecret';
+export const CREATE_ENCRYPTION_KEY =            'createEncryptionKey';
