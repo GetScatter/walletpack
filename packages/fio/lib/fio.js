@@ -44,6 +44,8 @@ const EXPLORER = {
 	"block":"https://explorer.fioprotocol.io/block/{x}"
 };
 
+let fio_address_hint = null;
+
 export default class FIO extends Plugin {
 
 	constructor(){ super(Blockchains.FIO, PluginTypes.BLOCKCHAIN_SUPPORT) }
@@ -626,6 +628,9 @@ export default class FIO extends Plugin {
 		}
 	}
 
+	async setParserAddressHint(fio_address){
+		fio_address_hint = fio_address;
+	}
 
 	async requestParser(payload, network){
 		const {transaction} = payload;
@@ -677,12 +682,9 @@ export default class FIO extends Plugin {
 			fiotransfer.type = 'transfer';
 			fiotransfer.name = 'transfer';
 			fiotransfer.data.amount = parseFloat(parseFloat(fiotransfer.data.amount / 1000000000).toFixed(this.defaultDecimals())) + ' FIO';
-			fiotransfer.data.to = await this.getNames(network, fiotransfer.data.payee_public_key).then(x => {
-				if(!x.fio_addresses || !x.fio_addresses.length) return fiotransfer.data.payee_public_key;
-				return x.fio_addresses[0].fio_address;
-			}).catch(() => {
-				return fiotransfer.data.payee_public_key;
-			});
+			fiotransfer.data.to = fio_address_hint ? fio_address_hint : fiotransfer.data.payee_public_key;
+			fio_address_hint = null;
+			fiotransfer.data.to_fio_public_key = fiotransfer.data.payee_public_key;
 			delete fiotransfer.data.payee_public_key;
 		}
 
