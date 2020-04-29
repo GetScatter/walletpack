@@ -118,7 +118,7 @@ export default class Token {
 
 	symbolClass(){
     	const iconSearch = `${this.blockchain}-${this.symbol}`.toLowerCase();
-    	const icons = ['eth-tusd', 'btc-btc', 'eos-eos', 'eth-dai', 'trx-trx', 'eth-eth', 'fio-fio'];
+    	const icons = ['eth-tusd', 'btc-btc', 'eos-eos', 'eth-dai', 'trx-trx', 'eth-eth', 'fio-fio', 'cyberway'];
     	return icons.includes(iconSearch) ? `token-icon token-${iconSearch}` : null;
 	}
 
