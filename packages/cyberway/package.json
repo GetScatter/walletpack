@@ -1,11 +1,11 @@
 {
-  "name": "@walletpack/tron",
-  "version": "0.0.63-alpha.12",
+  "name": "@walletpack/cyberway",
+  "version": "0.0.4-alpha.16",
   "description": "> TODO: description",
-  "author": "GetScatter Ltd. 2019",
+  "author": "CyberWay Core. 2020",
   "homepage": "",
   "license": "ISC",
-  "main": "tron.js",
+  "main": "cyberway.js",
   "files": [
     "dist",
     "prepare.js"
@@ -16,12 +16,8 @@
   },
   "dependencies": {
     "@walletpack/core": "^1.0.51-alpha.13",
-    "elliptic": "^6.5.2",
-    "ethereumjs-util": "^6.1.0",
-    "tronweb": "^2.8.0"
-  },
-  "publishConfig": {
-    "access": "public"
+    "cyberwayjs": "^20.0.2",
+    "eosjs-ecc": "^4.0.7"
   },
   "gitHead": "066f89d15b2c6d9083429325cbfcf323a1ded9aa"
 }

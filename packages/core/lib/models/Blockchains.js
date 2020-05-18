@@ -5,6 +5,7 @@ export let Blockchains = {
     TRX:'trx',
     BTC:'btc',
 	FIO:'fio',
+	CYBER:'cyber',
 };
 
 export let BlockchainsArray = Object.keys(Blockchains).map(key => ({key, value:Blockchains[key]}));
@@ -17,6 +18,7 @@ export let blockchainName = x => {
         case Blockchains.TRX: return 'Tron';
         case Blockchains.BTC: return 'Bitcoin';
         case Blockchains.FIO: return 'FIO';
+        case Blockchains.CYBER: return 'CyberWay';
         default: return x;
     }
 };
