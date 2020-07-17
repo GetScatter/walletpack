@@ -21,10 +21,10 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-10.14.13.tgz#ac786d623860adf39a3f51d629480aacd6a6eec7"
   integrity sha512-yN/FNNW1UYsRR1wwAoyOwqvDuLDtVXnaJTZ898XIw/Q5cCaeVAlVwvsmXLX5PuiScBYwZsZU4JYSHB3TvfdwvQ==
 
-"@walletpack/core@^1.0.46":
-  version "1.0.46"
-  resolved "https://registry.yarnpkg.com/@walletpack/core/-/core-1.0.46.tgz#7ff2e561ceb20f8b9346e289bc77c3f974724afe"
-  integrity sha512-bEkw6qabRaVaHcgPU51JLUiJ2ALyuUKC8ZSLSLNhtXTs34kIJVesWXTcLKFJXxvdkfGhtHU1jbEgURhGRIfWrw==
+"@walletpack/core@^1.0.50":
+  version "1.0.50"
+  resolved "https://registry.yarnpkg.com/@walletpack/core/-/core-1.0.50.tgz#a89c6c98a9d39dc07d47cb05cf3612c1b4c9af69"
+  integrity sha512-mA5/WKuY/DoudYSapdf1k9t11/FiOqtIkgZITwg0igJMwYBXUkTKPFh4ny76RiCadug7NUuDcdW+gpR81weFUA==
   dependencies:
     aes-oop "^1.0.4"
     bignumber.js "^9.0.0"
@@ -506,9 +506,9 @@ locate-path@^3.0.0:
     path-exists "^3.0.0"
 
 lodash@^4.17.14:
-  version "4.17.15"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.15.tgz#b447f6670a0455bbfeedd11392eff330ea097548"
-  integrity sha512-8xOcRHvCjnocdS5cpwXQXVzmmh5e5+saE2QGoeQmbKmRS6J3VQppPOIt0MnmE+4xlZoumy0GPG0D0MVIQbNA1A==
+  version "4.17.19"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.19.tgz#e48ddedbe30b3321783c5b4301fbd353bc1e4a4b"
+  integrity sha512-JNvd8XER9GQX0v2qJgsaN/mzFCNA5BRe/j8JN9d+tWyGLSodKQHKFicdwNYzWwI3wjRnaKPsGj1XkBjx/F96DQ==
 
 long@~3:
   version "3.2.0"
