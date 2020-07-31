@@ -148,7 +148,35 @@ export default class FIO extends Plugin {
 		);
 	}
 
-	hasUntouchableTokens(){ return false; }
+	async accountData(account, network = null, accountName = null){
+
+		const getAccount = () => {
+			return fetch(`${network ? network.fullhost() : account.network().fullhost()}/v1/chain/get_account`, {
+				method: 'POST',
+				body: JSON.stringify({account_name:accountName ? accountName : account.name})
+			})
+				.then(res => res.json())
+		};
+
+		return Promise.race([
+			new Promise(resolve => setTimeout(() => resolve(null), 2000)),
+			getAccount()
+		])
+	}
+
+	hasUntouchableTokens(){ return true; }
+	async untouchableBalance(account){
+		const getCpuAndNet = async () => {
+			const accData = await this.accountData(account).catch(() => null);
+			if(!accData || !accData.hasOwnProperty('self_delegated_bandwidth') || !accData.self_delegated_bandwidth) return null;
+			const token = account.network().systemToken().clone();
+			token.amount = parseFloat(parseFloat(accData.self_delegated_bandwidth.cpu_weight.split(' ')[0]) + parseFloat(accData.self_delegated_bandwidth.net_weight.split(' ')[0])).toFixed(token.decimals);
+			token.unusable = 'CPU / NET';
+			return token;
+		}
+
+		return [await getCpuAndNet()].filter(x => !!x);
+	}
 
 	accountHash(publicKey){
 		return Fio.accountHash(publicKey);
