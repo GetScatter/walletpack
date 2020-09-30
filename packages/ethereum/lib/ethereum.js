@@ -32,7 +32,7 @@ const getCachedInstance = (network, wallet = null) => {
 		const web3 = new Web3(engine);
 		if(wallet) engine.addProvider(new HookedWalletSubprovider(wallet));
 
-		const rpcUrl = network.host === 'ethnodes.get-scatter.com' ? 'https://commonly-classic-katydid.quiknode.io/d0bf98e7-a866-43d4-ac71-2397fd1b3aba/dQsznyrZRg2dr4DQJNPDgw==/' : network.fullhost();
+		const rpcUrl = network.host === 'ethnodes.get-scatter.com' ? 'https://twilight-shy-surf.quiknode.pro/1bebe371e965847a5eb3fb6fe73b7c0f782ba991/' : network.fullhost();
 		engine.addProvider(new RpcSubprovider({rpcUrl}));
 		engine.start();
 		cachedInstances[key] = [web3, engine];
