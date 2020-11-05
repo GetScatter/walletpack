@@ -51,6 +51,7 @@ const getHistoryData = (network, route, params) => fetch(`${network.fullhost()}/
 
 
 const getAccountsFromPublicKey = async (publicKey, network, fallbackToChain = false) => {
+	console.log('getting accounts for', publicKey);
 	if(!fallbackToChain && await LightAPI.networkString(network)){
 		const accountsFromApi = await LightAPI.getAccountsFromPublicKey(publicKey, network);
 		if(!accountsFromApi) return getAccountsFromPublicKey(publicKey, network, true);
