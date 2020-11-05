@@ -21,10 +21,10 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-10.14.13.tgz#ac786d623860adf39a3f51d629480aacd6a6eec7"
   integrity sha512-yN/FNNW1UYsRR1wwAoyOwqvDuLDtVXnaJTZ898XIw/Q5cCaeVAlVwvsmXLX5PuiScBYwZsZU4JYSHB3TvfdwvQ==
 
-"@walletpack/core@^1.0.46":
-  version "1.0.46"
-  resolved "https://registry.yarnpkg.com/@walletpack/core/-/core-1.0.46.tgz#7ff2e561ceb20f8b9346e289bc77c3f974724afe"
-  integrity sha512-bEkw6qabRaVaHcgPU51JLUiJ2ALyuUKC8ZSLSLNhtXTs34kIJVesWXTcLKFJXxvdkfGhtHU1jbEgURhGRIfWrw==
+"@walletpack/core@^1.0.50":
+  version "1.0.50"
+  resolved "https://registry.yarnpkg.com/@walletpack/core/-/core-1.0.50.tgz#a89c6c98a9d39dc07d47cb05cf3612c1b4c9af69"
+  integrity sha512-mA5/WKuY/DoudYSapdf1k9t11/FiOqtIkgZITwg0igJMwYBXUkTKPFh4ny76RiCadug7NUuDcdW+gpR81weFUA==
   dependencies:
     aes-oop "^1.0.4"
     bignumber.js "^9.0.0"
@@ -781,9 +781,9 @@ y18n@^4.0.0:
   integrity sha512-r9S/ZyXu/Xu9q1tYlpsLIsa3EeLXXk0VwlxqTcFRfg9EhMW+17kbt9G0NrgCmhGb5vT2hyhJZLfDGx+7+5Uj/w==
 
 yargs-parser@^13.1.1:
-  version "13.1.1"
-  resolved "https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-13.1.1.tgz#d26058532aa06d365fe091f6a1fc06b2f7e5eca0"
-  integrity sha512-oVAVsHz6uFrg3XQheFII8ESO2ssAf9luWuAd6Wexsu4F3OtIW0o8IribPXYrD4WC24LWtPrJlGy87y5udK+dxQ==
+  version "13.1.2"
+  resolved "https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-13.1.2.tgz#130f09702ebaeef2650d54ce6e3e5706f7a4fb38"
+  integrity sha512-3lbsNRf/j+A4QuSZfDRA7HRSfWrzO0YjqTJd5kjAq37Zep1CEgaYmrH9Q3GwPiB9cHyd1Y1UwggGhJGoxipbzg==
   dependencies:
     camelcase "^5.0.0"
     decamelize "^1.2.0"
