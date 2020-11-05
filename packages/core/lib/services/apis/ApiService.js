@@ -248,8 +248,13 @@ export default class ApiService {
 			const {payload} = request;
 			const {origin, publicKey, data} = request.payload;
 
-			if(data.split(' ').some(x => x.length > 12))
-				return resolve({id:request.id, result:Error.malicious('You can not sign strings where any of the words are over 12 characters.')});
+			if(data.indexOf(':') === -1) {
+				if (data.split(' ').some(x => x.length > 12))
+					return resolve({
+						id: request.id,
+						result: Error.malicious('You can not sign strings where any of the words are over 12 characters.')
+					});
+			}
 
 
 			if(identityKey) payload.identityKey = identityKey;
