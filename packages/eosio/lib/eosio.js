@@ -191,6 +191,7 @@ export default class EOS extends Plugin {
 			}, {
 				blocksBehind: 3,
 				expireSeconds: 30,
+				useLastIrreversible:true,
 			})
 				.then(trx => {
 					const history = new HistoricAction(account, 'proxy', trx.transaction_id);
@@ -259,6 +260,7 @@ export default class EOS extends Plugin {
 			return eos.transact({actions},{
 				blocksBehind: 3,
 				expireSeconds: 30,
+				useLastIrreversible:true,
 			})
 				.catch(res => {
 					reject({error:parseErrorMessage(res)})
@@ -318,6 +320,7 @@ export default class EOS extends Plugin {
 			}, {
 				blocksBehind: 3,
 				expireSeconds: 30,
+				useLastIrreversible:true,
 			})
 				.then(trx => {
 					const history = new HistoricAction(account, 'proxy', trx.transaction_id);
@@ -618,6 +621,7 @@ export default class EOS extends Plugin {
 			}, {
 				blocksBehind: 3,
 				expireSeconds: 30,
+				useLastIrreversible:true,
 			})
 				.then(trx => resolve(trx.transaction_id))
 				.catch(res => {
@@ -658,6 +662,7 @@ export default class EOS extends Plugin {
 			}, {
 				blocksBehind: 3,
 				expireSeconds: 30,
+				useLastIrreversible:true,
 			})
 				.then(trx => resolve(trx.transaction_id))
 				.catch(res => {
@@ -694,6 +699,7 @@ export default class EOS extends Plugin {
 			}, {
 				blocksBehind: 3,
 				expireSeconds: 30,
+				useLastIrreversible:true,
 			})
 				.then(trx => resolve(trx.transaction_id))
 				.catch(res => {
@@ -730,6 +736,7 @@ export default class EOS extends Plugin {
 			}, {
 				blocksBehind: 3,
 				expireSeconds: 30,
+				useLastIrreversible:true,
 			})
 				.catch(res => resolve({error:parseErrorMessage(res)}))
 				.then(result => resolve(result))
@@ -827,7 +834,7 @@ export default class EOS extends Plugin {
 
 		try {
 			return await Promise.all(contracts.map(async account => {
-				const chainAbi = await getChainData(network, `get_raw_abi`, {account_name:account}).catch(() => null).then(x => x.abi);
+				const chainAbi = await getChainData(network, `get_raw_abi`, {account_name:account}).then(x => x.abi).catch(() => null);
 				if(!chainAbi) return console.error(`Could not fetch ABIs for ${account}`);
 				const rawAbi = numeric.base64ToBinary(chainAbi);
 				const abi = eosjsUtil.rawAbiToJson(rawAbi);
