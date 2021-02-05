@@ -189,7 +189,6 @@ export default class EOS extends Plugin {
 					},
 				}]
 			}, {
-				blocksBehind: 3,
 				expireSeconds: 30,
 				useLastIrreversible:true,
 			})
@@ -258,7 +257,6 @@ export default class EOS extends Plugin {
 			}).filter(x => !!x);
 
 			return eos.transact({actions},{
-				blocksBehind: 3,
 				expireSeconds: 30,
 				useLastIrreversible:true,
 			})
@@ -318,7 +316,6 @@ export default class EOS extends Plugin {
 					},
 				}]
 			}, {
-				blocksBehind: 3,
 				expireSeconds: 30,
 				useLastIrreversible:true,
 			})
@@ -619,7 +616,6 @@ export default class EOS extends Plugin {
 						},
 					}]
 			}, {
-				blocksBehind: 3,
 				expireSeconds: 30,
 				useLastIrreversible:true,
 			})
@@ -660,7 +656,6 @@ export default class EOS extends Plugin {
 					data,
 				}]
 			}, {
-				blocksBehind: 3,
 				expireSeconds: 30,
 				useLastIrreversible:true,
 			})
@@ -697,7 +692,6 @@ export default class EOS extends Plugin {
 					data,
 				}]
 			}, {
-				blocksBehind: 3,
 				expireSeconds: 30,
 				useLastIrreversible:true,
 			})
@@ -734,7 +728,6 @@ export default class EOS extends Plugin {
 					},
 				}]
 			}, {
-				blocksBehind: 3,
 				expireSeconds: 30,
 				useLastIrreversible:true,
 			})
