@@ -189,8 +189,8 @@ export default class EOS extends Plugin {
 					},
 				}]
 			}, {
+				blocksBehind: 3,
 				expireSeconds: 30,
-				useLastIrreversible:true,
 			})
 				.then(trx => {
 					const history = new HistoricAction(account, 'proxy', trx.transaction_id);
@@ -257,8 +257,8 @@ export default class EOS extends Plugin {
 			}).filter(x => !!x);
 
 			return eos.transact({actions},{
+				blocksBehind: 3,
 				expireSeconds: 30,
-				useLastIrreversible:true,
 			})
 				.catch(res => {
 					reject({error:parseErrorMessage(res)})
@@ -316,8 +316,8 @@ export default class EOS extends Plugin {
 					},
 				}]
 			}, {
+				blocksBehind: 3,
 				expireSeconds: 30,
-				useLastIrreversible:true,
 			})
 				.then(trx => {
 					const history = new HistoricAction(account, 'proxy', trx.transaction_id);
@@ -616,8 +616,8 @@ export default class EOS extends Plugin {
 						},
 					}]
 			}, {
+				blocksBehind: 3,
 				expireSeconds: 30,
-				useLastIrreversible:true,
 			})
 				.then(trx => resolve(trx.transaction_id))
 				.catch(res => {
@@ -656,8 +656,8 @@ export default class EOS extends Plugin {
 					data,
 				}]
 			}, {
+				blocksBehind: 3,
 				expireSeconds: 30,
-				useLastIrreversible:true,
 			})
 				.then(trx => resolve(trx.transaction_id))
 				.catch(res => {
@@ -692,8 +692,8 @@ export default class EOS extends Plugin {
 					data,
 				}]
 			}, {
+				blocksBehind: 3,
 				expireSeconds: 30,
-				useLastIrreversible:true,
 			})
 				.then(trx => resolve(trx.transaction_id))
 				.catch(res => {
@@ -728,8 +728,8 @@ export default class EOS extends Plugin {
 					},
 				}]
 			}, {
+				blocksBehind: 3,
 				expireSeconds: 30,
-				useLastIrreversible:true,
 			})
 				.catch(res => resolve({error:parseErrorMessage(res)}))
 				.then(result => resolve(result))
