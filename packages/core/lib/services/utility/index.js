@@ -5,6 +5,7 @@ import SocketService from './SocketService';
 import StoreService from './StoreService';
 import TokenService from './TokenService';
 import EventService from './EventService';
+import IdentityService from './IdentityService.js';
 
 export default {
 	ContactService,
@@ -14,4 +15,5 @@ export default {
 	StoreService,
 	TokenService,
 	EventService,
+	IdentityService,
 }
